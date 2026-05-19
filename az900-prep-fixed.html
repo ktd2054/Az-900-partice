@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AZ900 Prep</title>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+
+    
+
+// ─── FLASHCARDS ───────────────────────────────────────────────────────────────
+const FLASHCARDS = [
+  { q: "What does IaaS stand for?", a: "Infrastructure as a Service — you manage OS, apps, and data; provider manages hardware" },
+  { q: "What does PaaS stand for?", a: "Platform as a Service — you manage apps and data; provider manages OS, runtime, and hardware" },
+  { q: "What does SaaS stand for?", a: "Software as a Service — provider manages everything; you just use the application (e.g., Microsoft 365)" },
+  { q: "What is an Azure Region?", a: "A geographic area containing one or more Azure datacenters connected by low-latency networks" },
+  { q: "What is an Availability Zone?", a: "Physically separate datacenters within an Azure region with independent power, cooling, and networking" },
+  { q: "What is a Region Pair?", a: "Each Azure region paired with another region 300+ miles away for disaster recovery and replication" },
+  { q: "What is CapEx?", a: "Capital Expenditure — large upfront investment in physical infrastructure, depreciated over time (on-premises model)" },
+  { q: "What is OpEx?", a: "Operational Expenditure — pay-as-you-go spending. Azure is OpEx — you pay only for what you consume" },
+  { q: "What is Azure Resource Manager (ARM)?", a: "The deployment and management layer for Azure. All interactions go through ARM — portal, CLI, PowerShell, REST API" },
+  { q: "What is a Resource Group?", a: "A logical container that holds related Azure resources. Resources in a group share lifecycle management" },
+  { q: "What is RBAC?", a: "Role-Based Access Control — grant users/groups/apps only the permissions they need at a specific scope" },
+  { q: "What are the three built-in RBAC roles?", a: "Owner (full access + delegate), Contributor (create/manage, no access delegation), Reader (view only)" },
+  { q: "What is Azure Policy?", a: "Service to create, assign, and manage policies that enforce rules and effects over resources (e.g., allowed locations)" },
+  { q: "What is a Resource Lock?", a: "Prevents accidental deletion or modification. Types: ReadOnly (no changes) and Delete/CanNotDelete (no deletion)" },
+  { q: "What is Azure Blob Storage?", a: "Object storage for unstructured data (images, videos, backups). Has Hot, Cool, and Archive tiers" },
+  { q: "What is ExpressRoute?", a: "Private dedicated connection between on-premises network and Azure — NOT over the public internet" },
+  { q: "What is a VPN Gateway?", a: "Encrypted connection between Azure VNet and on-premises over the public internet (IPsec/IKE tunnel)" },
+  { q: "What is Azure Cosmos DB?", a: "Globally distributed, multi-model NoSQL database. Supports SQL, MongoDB, Cassandra, Gremlin, and Table APIs" },
+  { q: "What is Azure Kubernetes Service (AKS)?", a: "Managed Kubernetes container orchestration. Azure manages the control plane; you manage worker nodes" },
+  { q: "What is Azure Functions?", a: "Serverless compute — run code on demand in response to events. Pay only for execution time used" },
+  { q: "What is Azure Active Directory?", a: "Microsoft's cloud-based identity and access management service (now called Microsoft Entra ID)" },
+  { q: "What is Multi-Factor Authentication (MFA)?", a: "Requires two or more verification factors: something you know (password) + have (phone) + are (fingerprint)" },
+  { q: "What is Conditional Access?", a: "Azure AD feature that enforces access policies based on: user identity, location, device, and app being accessed" },
+  { q: "What is Azure Key Vault?", a: "Managed service for storing and accessing secrets, encryption keys, and certificates securely" },
+  { q: "What is Microsoft Defender for Cloud?", a: "Cloud Security Posture Management (CSPM) and Cloud Workload Protection Platform — security recommendations and threat protection" },
+  { q: "What is Microsoft Sentinel?", a: "Cloud-native SIEM and SOAR solution — collects data, detects threats, investigates, and responds to incidents" },
+  { q: "What is Defense in Depth?", a: "Security strategy using multiple layers: physical, identity, perimeter, network, compute, application, and data" },
+  { q: "What is Zero Trust?", a: "Security model: never trust, always verify. Assume breach, verify every request explicitly, use least privilege access" },
+  { q: "What is Azure Monitor?", a: "Central monitoring service for collecting metrics, logs, and telemetry from Azure resources and on-premises" },
+  { q: "What is Azure Advisor?", a: "Free service providing personalized recommendations across Reliability, Security, Performance, Cost, and Operational Excellence" },
+  { q: "What is the Azure Pricing Calculator?", a: "Tool to estimate the cost of Azure services before deployment — azure.microsoft.com/pricing/calculator" },
+  { q: "What is a Reserved Instance?", a: "Commitment to use a VM for 1 or 3 years in exchange for up to 72% discount over pay-as-you-go pricing" },
+  { q: "What is Azure Hybrid Benefit?", a: "Use existing on-premises Windows Server and SQL Server licenses to run workloads in Azure at reduced cost" },
+  { q: "What is a Spot VM?", a: "Unused Azure capacity available at up to 90% discount, but can be evicted with 30-second notice" },
+  { q: "What is Azure DDoS Protection?", a: "Basic: free, always on. Standard: advanced mitigation, diagnostics, rapid response support" },
+  { q: "What is Azure Firewall?", a: "Managed, stateful, cloud-native network firewall service with built-in high availability and scalability" },
+  { q: "What is an NSG?", a: "Network Security Group — contains security rules to allow or deny inbound/outbound traffic to/from Azure resources" },
+  { q: "What is Azure Service Health?", a: "Personalized dashboard showing Azure service issues, planned maintenance, and health advisories for your resources" },
+  { q: "What is Azure Bastion?", a: "Managed PaaS providing secure RDP/SSH to VMs through the browser — no public IP needed on the VM" },
+  { q: "What is the Shared Responsibility Model?", a: "Divides security responsibilities between cloud provider and customer based on service model (IaaS/PaaS/SaaS)" },
+  { q: "What is Azure App Service?", a: "PaaS for hosting web apps, REST APIs, and mobile backends. Supports .NET, Java, Node.js, Python, PHP, Ruby" },
+  { q: "What is a Virtual Network (VNet)?", a: "Private, isolated network in Azure. Enables Azure resources to communicate securely with each other, internet, and on-premises" },
+  { q: "What is VNet Peering?", a: "Connects two Azure VNets so resources communicate as if on the same network, using Microsoft backbone (not internet)" },
+  { q: "What is Azure CDN?", a: "Content Delivery Network — caches content at edge locations globally to reduce latency for users" },
+  { q: "What is the TCO Calculator?", a: "Total Cost of Ownership Calculator — estimates savings when migrating from on-premises to Azure" },
+  { q: "What is Azure Arc?", a: "Extends Azure management to on-premises, multi-cloud, and edge environments — manage non-Azure resources with Azure tools" },
+  { q: "What is an Azure Tag?", a: "Key-value pair applied to resources for organization, cost allocation, automation, and governance (e.g., Environment: Prod)" },
+  { q: "What is Azure Blueprints?", a: "Package of ARM templates, RBAC, and policies deployed together for consistent, repeatable governance across environments" },
+  { q: "What is Microsoft Purview?", a: "Unified data governance service for discovering, classifying, and managing data across Azure, on-premises, and multi-cloud" },
+  { q: "What is Azure VM Scale Sets?", a: "Create and manage a group of identical, load-balanced VMs that automatically scale in/out based on demand or schedule" },
+];
+
+// ─── QUIZZES ─────────────────────────────────────────────────────────────────
+const QUIZZES = [
+  { id: 1, q: "Which cloud service model gives you the most control over the operating system?", options: ["SaaS", "PaaS", "IaaS", "FaaS"], answer: 2, exp: "IaaS gives you control over the OS, middleware, and applications while the provider manages hardware." },
+  { id: 2, q: "Your company wants to avoid a large upfront infrastructure investment. Which cost model does Azure use?", options: ["CapEx", "OpEx", "DepEx", "TradEx"], answer: 1, exp: "Azure uses OpEx — pay-as-you-go with no large upfront costs." },
+  { id: 3, q: "An Azure region is best described as:", options: ["A single datacenter", "A geographic area with multiple datacenters", "A group of subscriptions", "A virtual network boundary"], answer: 1, exp: "An Azure Region is a geographic area containing one or more datacenters connected by low-latency networks." },
+  { id: 4, q: "Which Azure feature provides physically separate datacenters within a single region?", options: ["Region Pairs", "Availability Sets", "Availability Zones", "Fault Domains"], answer: 2, exp: "Availability Zones are physically separate datacenters within a region, each with independent power, cooling, and networking." },
+  { id: 5, q: "What is the minimum number of Availability Zones in a supported Azure region?", options: ["1", "2", "3", "5"], answer: 2, exp: "Azure regions with Availability Zones have a minimum of 3 separate zones to ensure resilience." },
+  { id: 6, q: "Which deployment model combines on-premises infrastructure with cloud resources?", options: ["Public cloud", "Private cloud", "Hybrid cloud", "Community cloud"], answer: 2, exp: "Hybrid cloud combines on-premises (private) infrastructure with public cloud resources, connected securely." },
+  { id: 7, q: "Azure Resource Manager (ARM) is primarily used for:", options: ["Monitoring resources", "Deploying and managing Azure resources", "Billing management", "User authentication"], answer: 1, exp: "ARM is the deployment and management service that provides a consistent management layer for all Azure resources." },
+  { id: 8, q: "What is the correct hierarchy from largest to smallest in Azure?", options: ["Subscription > Management Group > Resource Group > Resource", "Management Group > Subscription > Resource Group > Resource", "Resource Group > Subscription > Management Group > Resource", "Management Group > Resource Group > Subscription > Resource"], answer: 1, exp: "The correct hierarchy is: Management Groups → Subscriptions → Resource Groups → Resources." },
+  { id: 9, q: "Which RBAC role allows a user to manage everything EXCEPT granting access to others?", options: ["Owner", "Contributor", "Reader", "User Access Administrator"], answer: 1, exp: "Contributor can create and manage all resources but cannot grant access to others. Owner can do both." },
+  { id: 10, q: "You want to prevent accidental deletion of a production resource group. What should you apply?", options: ["Azure Policy", "Resource Tag", "Resource Lock (Delete)", "RBAC ReadOnly role"], answer: 2, exp: "A Delete lock prevents resources from being deleted while still allowing modifications." },
+  { id: 11, q: "Which storage service is best for storing large amounts of unstructured data like images and videos?", options: ["Azure Table Storage", "Azure Queue Storage", "Azure Blob Storage", "Azure File Storage"], answer: 2, exp: "Azure Blob Storage is designed for unstructured data like images, videos, documents, and backups." },
+  { id: 12, q: "Which Azure storage tier is best for rarely accessed data where retrieval time of hours is acceptable?", options: ["Hot tier", "Cool tier", "Archive tier", "Frozen tier"], answer: 2, exp: "Archive tier offers lowest storage cost but retrieval can take hours — ideal for compliance/backup data." },
+  { id: 13, q: "ExpressRoute differs from VPN Gateway because it:", options: ["Is cheaper", "Uses the public internet", "Provides a private dedicated connection not over the internet", "Is easier to set up"], answer: 2, exp: "ExpressRoute provides a private, dedicated connection between on-premises and Azure — NOT over the public internet." },
+  { id: 14, q: "Which Azure service would you use to orchestrate containers at scale?", options: ["Azure Container Instances", "Azure Functions", "Azure Kubernetes Service (AKS)", "Azure App Service"], answer: 2, exp: "AKS is Azure's managed Kubernetes service for orchestrating containerized applications at scale." },
+  { id: 15, q: "Azure Functions is an example of which compute model?", options: ["IaaS", "PaaS", "Serverless", "CaaS"], answer: 2, exp: "Azure Functions is serverless — you pay only when the function executes, with no need to manage servers." },
+  { id: 16, q: "Which service is Azure's cloud-based identity and access management solution?", options: ["Azure AD (Entra ID)", "Azure Key Vault", "Azure Security Center", "Azure RBAC"], answer: 0, exp: "Azure Active Directory (now Microsoft Entra ID) is Microsoft's cloud-based IAM service." },
+  { id: 17, q: "MFA requires how many verification factors?", options: ["1", "2 or more", "Exactly 3", "4 or more"], answer: 1, exp: "MFA requires two or more verification factors from different categories." },
+  { id: 18, q: "What is Azure Key Vault primarily used for?", options: ["Monitoring application performance", "Storing secrets, keys, and certificates securely", "Managing user identities", "Encrypting VM disks only"], answer: 1, exp: "Azure Key Vault securely stores and manages secrets, encryption keys, and certificates." },
+  { id: 19, q: "Which security model assumes every request could be a breach and requires explicit verification?", options: ["Defense in Depth", "Zero Trust", "Perimeter Security", "Shared Responsibility"], answer: 1, exp: "Zero Trust model: 'never trust, always verify' — assume breach and verify every request regardless of origin." },
+  { id: 20, q: "Azure Monitor is used to:", options: ["Manage user access", "Collect, analyze, and act on telemetry from Azure and on-premises", "Store application secrets", "Deploy ARM templates"], answer: 1, exp: "Azure Monitor is the central monitoring service that collects metrics and logs from Azure resources." },
+  { id: 21, q: "Which tool provides personalized recommendations for Reliability, Security, Performance, and Cost?", options: ["Azure Monitor", "Azure Service Health", "Azure Advisor", "Microsoft Defender"], answer: 2, exp: "Azure Advisor is a free service that analyzes your configuration and gives personalized best-practice recommendations." },
+  { id: 22, q: "What discount can Reserved Instances provide compared to pay-as-you-go?", options: ["Up to 30%", "Up to 50%", "Up to 72%", "Up to 90%"], answer: 2, exp: "Reserved Instances (1 or 3 year commitment) can provide up to 72% savings over pay-as-you-go pricing." },
+  { id: 23, q: "Spot VMs can provide up to what discount, but with what risk?", options: ["50% discount, no risk", "72% discount, license required", "90% discount, can be evicted with 30s notice", "60% discount, no SLA"], answer: 2, exp: "Spot VMs offer up to 90% discount on unused Azure capacity but can be evicted when capacity is needed back." },
+  { id: 24, q: "Azure Hybrid Benefit allows you to:", options: ["Use resources across different subscriptions", "Use existing Windows/SQL licenses to reduce Azure costs", "Connect on-premises to Azure for free", "Move resources between regions at no cost"], answer: 1, exp: "Azure Hybrid Benefit lets you use existing on-premises Windows Server and SQL Server licenses in Azure at reduced cost." },
+  { id: 25, q: "What is the purpose of Azure Blueprints?", options: ["Design Azure architecture diagrams", "Deploy packaged ARM templates + RBAC + Policies for repeatable governance", "Monitor resource compliance", "Create billing reports"], answer: 1, exp: "Azure Blueprints packages ARM templates, RBAC assignments, and policies for consistent, repeatable environment setup." },
+  { id: 26, q: "Which of the following is a Platform as a Service (PaaS) offering?", options: ["Azure Virtual Machines", "Azure App Service", "Azure Virtual Network", "Azure Blob Storage"], answer: 1, exp: "Azure App Service is PaaS — Microsoft manages the OS, runtime, and infrastructure. You manage your app and data." },
+  { id: 27, q: "What does the Shared Responsibility Model define?", options: ["How Azure shares costs with customers", "Division of security responsibilities between Azure and customers", "How resources are shared across subscriptions", "Azure's data sharing policies"], answer: 1, exp: "The Shared Responsibility Model defines which security responsibilities belong to Azure and which belong to the customer." },
+  { id: 28, q: "In which scenario would Azure VMs be the BEST choice?", options: ["You want Azure to manage the OS automatically", "You need serverless event-driven compute", "You need full control over the OS (lift-and-shift)", "You want to deploy a web app without managing infrastructure"], answer: 2, exp: "Azure VMs are IaaS — best for full OS control, custom software, and lifting-and-shifting existing workloads." },
+  { id: 29, q: "What is VNet Peering?", options: ["Connecting a VNet to the internet", "Connecting two Azure VNets to communicate privately", "Connecting a VNet to on-premises via VPN", "Creating subnets within a VNet"], answer: 1, exp: "VNet Peering connects two Azure VNets allowing resources to communicate using the Microsoft backbone, not the internet." },
+  { id: 30, q: "Azure Bastion provides:", options: ["DDoS attack mitigation", "Secure RDP/SSH access to VMs through the browser without public IPs", "Load balancing across VMs", "DNS resolution for Azure resources"], answer: 1, exp: "Azure Bastion allows secure browser-based RDP/SSH to VMs without exposing them with public IP addresses." },
+  { id: 31, q: "Which Azure service provides SIEM and SOAR capabilities?", options: ["Microsoft Defender for Cloud", "Azure Key Vault", "Microsoft Sentinel", "Azure Firewall"], answer: 2, exp: "Microsoft Sentinel is a cloud-native SIEM and SOAR solution for threat detection and response." },
+  { id: 32, q: "Microsoft Defender for Cloud provides:", options: ["Identity management only", "Cloud Security Posture Management and workload protection", "Network traffic filtering", "Secret management"], answer: 1, exp: "Microsoft Defender for Cloud provides CSPM (security posture assessments) and CWPP (workload threat protection)." },
+  { id: 33, q: "Which tool should you use to ESTIMATE costs before deploying Azure resources?", options: ["TCO Calculator", "Azure Cost Management", "Azure Pricing Calculator", "Azure Advisor"], answer: 2, exp: "The Azure Pricing Calculator estimates costs for planned Azure deployments." },
+  { id: 34, q: "Which tool compares the cost of running workloads on-premises vs. in Azure?", options: ["Pricing Calculator", "TCO Calculator", "Azure Cost Management", "Azure Monitor"], answer: 1, exp: "The Total Cost of Ownership (TCO) Calculator helps estimate cost savings when migrating from on-premises to Azure." },
+  { id: 35, q: "Azure Cosmos DB supports which of the following APIs?", options: ["Only SQL API", "SQL, MongoDB, Cassandra, Gremlin, and Table", "Only NoSQL APIs", "Only MongoDB and Cassandra"], answer: 1, exp: "Azure Cosmos DB is multi-model and supports SQL, MongoDB, Cassandra, Gremlin (graph), and Table APIs." },
+  { id: 36, q: "What is the purpose of Azure CDN?", options: ["Securing web applications from attacks", "Caching content closer to users globally to reduce latency", "Providing serverless compute at the edge", "Managing DNS records globally"], answer: 1, exp: "Azure CDN caches static content at globally distributed edge locations to reduce load time for users." },
+  { id: 37, q: "Which Azure service should you use to host a Windows desktop in the cloud?", options: ["Azure VMs", "Azure App Service", "Azure Virtual Desktop", "Azure Container Instances"], answer: 2, exp: "Azure Virtual Desktop provides cloud-based Windows desktop and app virtualization." },
+  { id: 38, q: "Resource Tags in Azure are:", options: ["Automatically inherited by child resources", "Key-value pairs for organizing and managing resources", "Security rules for network traffic", "Billing plans for subscriptions"], answer: 1, exp: "Tags are key-value pairs used for organization, cost tracking, and governance. They are NOT automatically inherited." },
+  { id: 39, q: "What is the primary purpose of Azure Policy?", options: ["Monitor resource performance", "Enforce organizational standards and assess compliance", "Manage user identities", "Track resource costs"], answer: 1, exp: "Azure Policy creates, assigns, and manages policies that enforce specific rules over resources to ensure compliance." },
+  { id: 40, q: "Azure VM Scale Sets automatically:", options: ["Patch the OS on VMs", "Create and manage a group of identical VMs that scale with demand", "Move VMs between regions", "Backup VM data"], answer: 1, exp: "VM Scale Sets create and manage a group of load-balanced, identical VMs that auto-scale based on demand or schedules." },
+  { id: 41, q: "Which layer of Defense in Depth is the innermost (closest to data)?", options: ["Physical security", "Perimeter", "Identity & Access", "Data"], answer: 3, exp: "In Defense in Depth, Data is the innermost layer — the most critical asset to protect." },
+  { id: 42, q: "Azure Application Gateway differs from Azure Load Balancer because it:", options: ["Operates at Layer 4 (TCP/UDP)", "Works across regions", "Operates at Layer 7 (HTTP/HTTPS) and includes WAF capability", "Is cheaper"], answer: 2, exp: "Application Gateway is a Layer 7 (HTTP/HTTPS) load balancer with optional Web Application Firewall (WAF)." },
+  { id: 43, q: "Which Azure service extends Azure management to non-Azure environments?", options: ["Azure VPN Gateway", "Azure Bastion", "Azure Arc", "Azure Front Door"], answer: 2, exp: "Azure Arc extends Azure management, governance, and security to on-premises, multi-cloud, and edge environments." },
+  { id: 44, q: "Which Azure service provides managed Kubernetes?", options: ["Azure Container Instances", "Azure Kubernetes Service (AKS)", "Azure Service Fabric", "Azure Functions"], answer: 1, exp: "AKS is a managed Kubernetes offering where Azure manages the control plane." },
+  { id: 45, q: "An NSG is used to:", options: ["Manage Azure Active Directory users", "Filter network traffic with allow/deny rules for Azure resources", "Monitor network performance", "Set up VPN connections"], answer: 1, exp: "NSGs contain security rules to allow or deny inbound and outbound traffic to/from Azure resources." },
+  { id: 46, q: "What type of Azure subscription boundary is ALSO a billing boundary?", options: ["Management Group", "Resource Group", "Subscription", "Tenant"], answer: 2, exp: "A Subscription is both an access control boundary and a billing boundary — each subscription generates its own invoice." },
+  { id: 47, q: "Microsoft Purview is used for:", options: ["Application performance monitoring", "Data governance — discovering, classifying, and managing data", "Network security management", "Identity lifecycle management"], answer: 1, exp: "Microsoft Purview provides unified data governance across Azure, on-premises, and multi-cloud." },
+  { id: 48, q: "What is 'cloud bursting'?", options: ["Excessive cloud spending", "Extending on-premises capacity into the cloud during peak demand", "Cloud service outages", "Rapidly deploying many cloud resources"], answer: 1, exp: "Cloud bursting uses on-premises infrastructure normally but 'bursts' to cloud resources during peak demand spikes." },
+  { id: 49, q: "Which cloud model is MOST suitable for strict data sovereignty requirements?", options: ["Public cloud", "Hybrid cloud", "Private cloud", "Community cloud"], answer: 2, exp: "Private cloud gives organizations complete control over data and infrastructure, ideal for strict regulatory requirements." },
+  { id: 50, q: "What feature allows Azure to automatically scale resources based on demand?", options: ["High Availability", "Elasticity", "Durability", "Redundancy"], answer: 1, exp: "Elasticity is the ability to automatically scale resources up or down based on demand — a key cloud benefit." },
+  { id: 51, q: "What makes Azure a 'consumption-based model'?", options: ["You pay a fixed monthly fee regardless of usage", "You pay only for what you use, when you use it", "You buy compute capacity upfront", "You pay based on the number of users"], answer: 1, exp: "Azure's consumption-based model means you're only charged for the resources and time you actually use." },
+  { id: 52, q: "Which Azure storage redundancy option provides the lowest cost but stores data in only one datacenter?", options: ["GRS", "ZRS", "LRS", "RA-GRS"], answer: 2, exp: "LRS (Locally Redundant Storage) replicates data 3 times within a single datacenter — lowest cost, least redundancy." },
+  { id: 53, q: "What is Log Analytics Workspace used for?", options: ["Managing Azure AD users", "Storing and querying log data using KQL", "Storing encryption keys", "Managing ARM templates"], answer: 1, exp: "Log Analytics Workspace collects and stores log data from Azure Monitor, queryable using Kusto Query Language (KQL)." },
+  { id: 54, q: "Which service provides Application Performance Monitoring (APM) for web apps?", options: ["Azure Monitor", "Application Insights", "Azure Advisor", "Azure Log Analytics"], answer: 1, exp: "Application Insights (part of Azure Monitor) provides APM — tracking requests, dependencies, exceptions, and performance." },
+  { id: 55, q: "Passwordless authentication in Azure AD includes:", options: ["Only SMS codes", "Windows Hello, FIDO2 keys, and Microsoft Authenticator app", "Only hardware tokens", "Only smart cards"], answer: 1, exp: "Azure AD supports passwordless: Windows Hello for Business, FIDO2 security keys, and Microsoft Authenticator app." },
+  { id: 56, q: "What is the purpose of Azure Availability Sets?", options: ["Distribute VMs across multiple regions", "Protect VMs from datacenter failures using fault and update domains", "Automatically scale VMs", "Enable load balancing across VMs"], answer: 1, exp: "Availability Sets group VMs across fault domains (separate hardware) and update domains (sequential updates) within a datacenter." },
+  { id: 57, q: "Which statement about Azure Resource Groups is TRUE?", options: ["Resources can only be in one resource group at a time", "Resource groups have their own SLAs", "Resources must be in the same region as their group", "Resource groups auto-delete when empty"], answer: 0, exp: "A resource can only belong to one resource group at a time, though it can be moved between groups." },
+  { id: 58, q: "Azure AD B2B is used for:", options: ["Customer-facing application authentication", "Inviting external partners/vendors to collaborate in your Azure AD tenant", "Creating service principals", "Managing guest Microsoft accounts only"], answer: 1, exp: "Azure AD B2B allows external users (partners, vendors) to be invited to your tenant and access your apps." },
+  { id: 59, q: "DDoS Protection Basic is:", options: ["A paid add-on service", "Free and always-on, protecting against common DDoS attacks", "Available only in specific regions", "Only available with Standard support plan"], answer: 1, exp: "Azure DDoS Protection Basic is free and automatically enabled to protect against common volumetric DDoS attacks." },
+  { id: 60, q: "Azure Automation provides:", options: ["Automatic VM scaling only", "Process automation with runbooks, configuration management, and update management", "Automatic Azure AD user provisioning", "Automatic billing optimization"], answer: 1, exp: "Azure Automation provides process automation (PowerShell/Python runbooks), DSC, and update management for VMs." },
+  { id: 61, q: "Which of the following is NOT a cloud computing benefit?", options: ["Eliminating hardware maintenance", "Guaranteed 100% uptime", "Reducing time to market", "Global scalability"], answer: 1, exp: "Cloud providers cannot guarantee 100% uptime — they offer SLAs with specific uptime percentages (99.9%, 99.99%, etc.)." },
+  { id: 62, q: "Azure SQL Database is an example of:", options: ["IaaS", "PaaS", "SaaS", "On-premises"], answer: 1, exp: "Azure SQL Database is PaaS — Microsoft manages the SQL Server engine, OS, and hardware. You manage the database." },
+  { id: 63, q: "Which Azure service provides a WAF (Web Application Firewall)?", options: ["Azure Load Balancer", "Azure Application Gateway", "Azure VPN Gateway", "Azure Bastion"], answer: 1, exp: "Azure Application Gateway includes an optional WAF that protects web apps from SQL injection and XSS attacks." },
+  { id: 64, q: "Azure Cost Management allows you to:", options: ["Predict future Azure feature releases", "Monitor spending, set budgets, and create cost alerts", "Negotiate pricing with Microsoft", "Automatically optimize resource configurations"], answer: 1, exp: "Azure Cost Management provides spending visibility, budget creation, cost alerts, and recommendations." },
+  { id: 65, q: "What is the SLA for a single Azure VM using Premium SSD?", options: ["99.5%", "99.9%", "99.95%", "99.99%"], answer: 1, exp: "A single Azure VM with Premium SSD has a 99.9% SLA. Using Availability Zones increases this to 99.99%." },
+  { id: 66, q: "Azure Container Instances is best for:", options: ["Running microservices at scale", "Quick, simple container deployments without orchestration", "Managing containerized databases", "Auto-scaling container clusters"], answer: 1, exp: "ACI is for simple, quick container deployments without the overhead of Kubernetes orchestration." },
+  { id: 67, q: "What is the purpose of Azure Site Recovery?", options: ["Backing up Azure SQL databases", "Disaster recovery — replicating VMs to a secondary region for failover", "Migrating on-premises to Azure", "Network failover between regions"], answer: 1, exp: "Azure Site Recovery replicates workloads to a secondary Azure region for disaster recovery failover." },
+  { id: 68, q: "Azure Files uses which protocol?", options: ["HTTP/HTTPS", "FTP", "SMB and NFS", "iSCSI"], answer: 2, exp: "Azure Files supports SMB and NFS protocols, allowing it to be mounted as a network drive on Windows, Linux, and macOS." },
+  { id: 69, q: "What is the 'agility' benefit of cloud computing?", options: ["Resources can scale automatically", "Cloud services never go down", "IT resources can be deployed and configured rapidly", "Data is automatically replicated globally"], answer: 2, exp: "Cloud agility means organizations can provision, configure, and deploy IT resources in minutes." },
+  { id: 70, q: "Which Azure service provides Infrastructure as a Service compute?", options: ["Azure App Service", "Azure Functions", "Azure Virtual Machines", "Azure Logic Apps"], answer: 2, exp: "Azure Virtual Machines are IaaS — you manage the OS, applications, and data while Azure manages the physical hardware." },
+  { id: 71, q: "What is 'geo-redundancy' in Azure Storage?", options: ["Replicate data across availability zones", "Replicate data to a paired region for disaster recovery", "Cache data at CDN edge locations", "Store data in multiple formats"], answer: 1, exp: "Geo-redundant storage replicates data to a secondary Azure region (the region pair) for protection against regional disasters." },
+  { id: 72, q: "Microsoft Defender for Cloud's Secure Score measures:", options: ["Network performance", "Security posture of your Azure environment", "Cost efficiency", "Application response time"], answer: 1, exp: "Microsoft Defender for Cloud calculates a Secure Score and provides actionable recommendations to improve security posture." },
+  { id: 73, q: "What is the primary benefit of using Azure Reserved Instances?", options: ["Eliminate downtime during maintenance", "Reduce compute costs by committing to 1 or 3 year terms", "Get dedicated hardware for compliance", "Automatically scale based on demand"], answer: 1, exp: "Reserved Instances provide significant discounts (up to 72%) when you commit to using specific VM types for 1 or 3 years." },
+  { id: 74, q: "Azure Monitor collects which two fundamental types of data?", options: ["Billing data and compliance data", "Metrics and Logs", "Network traffic and firewall rules", "Identity events and storage data"], answer: 1, exp: "Azure Monitor collects Metrics (numerical time-series data) and Logs (records with various data types)." },
+  { id: 75, q: "What is Azure Policy's 'Deny' effect?", options: ["Sends an alert when a non-compliant resource is created", "Blocks the creation of a resource that violates policy", "Automatically fixes non-compliant resources", "Logs non-compliant resources for review"], answer: 1, exp: "The 'Deny' policy effect blocks the API request when a resource configuration violates the policy rule." },
+  { id: 76, q: "In the Shared Responsibility Model, which is ALWAYS the customer's responsibility?", options: ["Physical network infrastructure", "Operating system patches", "Customer data and identities", "Hypervisor management"], answer: 2, exp: "Customer data, identities, and devices are ALWAYS the customer's responsibility regardless of IaaS, PaaS, or SaaS." },
+  { id: 77, q: "What is the purpose of ARM Templates?", options: ["Monitor Azure resources", "Define infrastructure as code in JSON for repeatable deployments", "Manage user roles and permissions", "Configure network routes"], answer: 1, exp: "ARM Templates are JSON files that define Azure infrastructure declaratively for consistent, repeatable deployments." },
+  { id: 78, q: "Azure Management Groups help you:", options: ["Monitor resource costs", "Apply governance controls across multiple subscriptions", "Create virtual networks", "Manage user identities"], answer: 1, exp: "Management Groups organize subscriptions into a hierarchy and allow governance to be applied across many subscriptions." },
+  { id: 79, q: "What is Azure Queue Storage used for?", options: ["Storing large binary files", "Storing relational data", "Decoupling application components with async message queuing", "File sharing between VMs"], answer: 2, exp: "Queue Storage stores messages for asynchronous processing, enabling decoupling of application components." },
+  { id: 80, q: "Which Azure networking component filters traffic between the internet and your VMs?", options: ["VPN Gateway", "Azure Load Balancer", "Network Security Group (NSG)", "Azure Bastion"], answer: 2, exp: "NSGs act as virtual firewalls with rules to allow or deny traffic to/from Azure resources based on IP, port, and protocol." },
+  { id: 81, q: "What is Geo-Redundant Storage (GRS)?", options: ["Data replicated within a single datacenter", "Data replicated to a paired region hundreds of miles away", "Data replicated across availability zones", "Data cached at CDN edge locations"], answer: 1, exp: "GRS replicates data to a paired Azure region hundreds of miles away for disaster recovery protection." },
+  { id: 82, q: "Which tool is used to run Azure CLI or PowerShell from the Azure Portal?", options: ["Azure DevOps", "Azure Cloud Shell", "Azure Automation", "Azure Monitor"], answer: 1, exp: "Azure Cloud Shell is a browser-based shell accessible from the Azure Portal that supports both Azure CLI and PowerShell." },
+  { id: 83, q: "Azure Service Health differs from Azure Monitor because:", options: ["Azure Monitor is free", "Service Health shows personalized Azure platform issues affecting your resources", "Monitor only works on-premises", "Service Health monitors application performance"], answer: 1, exp: "Azure Service Health provides a personalized view of Azure service incidents and planned maintenance specific to your resources." },
+  { id: 84, q: "Conditional Access policies evaluate based on:", options: ["Only the user's password strength", "Signals like user identity, location, device, and application", "Only the time of day", "Only the user's department"], answer: 1, exp: "Conditional Access evaluates multiple signals (user, location, device compliance, app) and applies access policies." },
+  { id: 85, q: "What is Azure Private Link?", options: ["A tool for linking Azure subscriptions", "Access to Azure services privately using your VNet's private IP addresses", "Connecting two Azure tenants", "A private GitHub repository link"], answer: 1, exp: "Azure Private Link allows accessing Azure services over a private endpoint in your VNet — traffic never leaves Microsoft's network." },
+  { id: 86, q: "Azure Cognitive Services (Azure AI Services) provides:", options: ["Custom AI model training from scratch only", "Pre-built AI capabilities accessible via APIs (vision, speech, language, decision)", "Azure's billing AI predictions", "Code generation services only"], answer: 1, exp: "Azure AI Services provides pre-built AI APIs for vision, speech, language understanding, and decision-making." },
+  { id: 87, q: "What is the Azure Marketplace?", options: ["Microsoft's hardware store", "An online store with certified apps, services, and solutions from Microsoft and partners", "Azure's compliance documentation portal", "A community forum for Azure users"], answer: 1, exp: "Azure Marketplace offers thousands of certified applications, services, and solutions from Microsoft and third-party partners." },
+  { id: 88, q: "What is Azure Managed Identity?", options: ["A managed Active Directory domain service", "An automatically managed identity for Azure services to authenticate to other Azure services", "A user account managed by Azure", "A service principal with manual credential management"], answer: 1, exp: "Managed Identity provides Azure services with an automatically managed identity in Azure AD — no credentials to store." },
+  { id: 89, q: "What is fault tolerance in Azure?", options: ["Resources scale automatically", "The system continues operating despite component failures", "Data is automatically compressed", "Resources are cheaper during low usage"], answer: 1, exp: "Fault tolerance means the system continues to function even when individual components fail, through redundancy and failover." },
+  { id: 90, q: "What is an Azure Tenant?", options: ["A billing container for Azure costs", "A dedicated instance of Azure AD representing an organization", "A regional Azure deployment", "A network perimeter for Azure resources"], answer: 1, exp: "An Azure Tenant is a dedicated instance of Azure Active Directory created when an organization signs up for Microsoft services." },
+  { id: 91, q: "Azure Policy 'initiatives' are:", options: ["Individual policy definitions", "Groups of related policy definitions for a specific goal", "Policy reports and compliance dashboards", "Automatic remediation tasks"], answer: 1, exp: "Policy Initiatives (policy sets) group multiple related policy definitions together to achieve a larger compliance goal." },
+  { id: 92, q: "What is the purpose of Azure Lighthouse?", options: ["Cloud security scanning", "Service providers managing customer Azure environments at scale", "Monitoring Azure service performance", "Disaster recovery management"], answer: 1, exp: "Azure Lighthouse enables service providers to manage multiple customer Azure environments from a single control plane." },
+  { id: 93, q: "Azure Disk Storage is primarily used for:", options: ["Storing application code", "Persistent storage volumes attached to Azure VMs", "Object storage for apps", "Message queuing"], answer: 1, exp: "Azure Managed Disks are persistent block storage volumes that attach to Azure VMs, like a virtual hard drive." },
+  { id: 94, q: "What is 'elasticity' in cloud computing?", options: ["The ability to move workloads to different clouds", "Automatically adjusting resources up or down in real-time to match demand", "The permanent allocation of dedicated resources", "Manual scaling by administrators"], answer: 1, exp: "Elasticity is the automatic, real-time adjustment of resources (scale out/in) based on actual demand." },
+  { id: 95, q: "Azure Service Bus is:", options: ["The network backbone connecting Azure regions", "A managed enterprise messaging service for decoupling applications", "Azure's support ticketing system", "A monitoring service for Azure services"], answer: 1, exp: "Azure Service Bus is a fully managed enterprise message broker with queues and publish-subscribe topics." },
+  { id: 96, q: "What is Azure Event Hubs designed for?", options: ["Enterprise messaging with queues", "Ingesting millions of events per second (big data streaming)", "Email notification routing", "Database change notifications"], answer: 1, exp: "Azure Event Hubs is a big data streaming platform capable of processing millions of events per second." },
+  { id: 97, q: "Which Azure service provides global HTTP load balancing with failover?", options: ["Azure Load Balancer", "Azure Application Gateway", "Azure Traffic Manager", "Azure CDN"], answer: 2, exp: "Azure Traffic Manager is a DNS-based global traffic load balancer that routes user traffic across Azure regions." },
+  { id: 98, q: "Azure Synapse Analytics combines:", options: ["AI and machine learning", "Data warehousing and big data analytics", "Identity management and security", "Compute and storage optimization"], answer: 1, exp: "Azure Synapse Analytics is an integrated analytics service combining enterprise data warehousing and big data analytics." },
+  { id: 99, q: "What is Azure IoT Hub?", options: ["Azure's content delivery service", "A managed service for bidirectional communication with IoT devices at scale", "An IoT device management console only", "Azure's edge computing platform"], answer: 1, exp: "Azure IoT Hub enables reliable, secure bidirectional communication between IoT applications and millions of devices." },
+  { id: 100, q: "Which statement about Azure SLAs is correct?", options: ["All Azure services have 100% SLA", "Adding Availability Zones typically increases the SLA", "SLAs apply only to Premium tier services", "Azure offers the same SLA for all regions"], answer: 1, exp: "Using Availability Zones (e.g., 2+ VMs in different zones) increases SLA from 99.9% to 99.99% for VMs." },
+  { id: 101, q: "Azure Databricks is:", options: ["A relational database service", "An Apache Spark-based analytics platform optimized for Azure", "A machine learning inference service only", "A real-time streaming platform only"], answer: 1, exp: "Azure Databricks is a managed Apache Spark analytics platform for big data processing and collaborative ML." },
+  { id: 102, q: "What does 'geo-distribution' allow in Azure?", options: ["Distribute costs across departments", "Deploy applications close to users globally to reduce latency", "Distribute storage across tiers automatically", "Manage multiple subscriptions globally"], answer: 1, exp: "Geo-distribution allows deploying applications to Azure regions close to users worldwide, reducing latency." },
+  { id: 103, q: "What is the Cloud Adoption Framework (CAF)?", options: ["A set of Azure APIs", "Microsoft's best practices guidance for cloud adoption strategy, planning, and implementation", "A pricing model for enterprise customers", "Azure's developer certification path"], answer: 1, exp: "The Cloud Adoption Framework provides proven guidance, tools, and templates to accelerate cloud adoption." },
+  { id: 104, q: "Azure Well-Architected Framework pillars are:", options: ["Cost, Network, Security, Performance, Compliance", "Reliability, Security, Cost Optimization, Operational Excellence, Performance Efficiency", "Availability, Scalability, Security, Compliance, Innovation", "Design, Build, Test, Deploy, Monitor"], answer: 1, exp: "The Azure Well-Architected Framework has 5 pillars: Reliability, Security, Cost Optimization, Operational Excellence, Performance Efficiency." },
+  { id: 105, q: "What is the purpose of Azure Logic Apps?", options: ["Container orchestration", "Serverless workflow automation integrating systems and services", "Virtual machine management", "Database migration"], answer: 1, exp: "Azure Logic Apps is a serverless platform for building workflows that automate and integrate applications and services." },
+  { id: 106, q: "What is Azure Static Web Apps?", options: ["VM-based web hosting", "Hosting static web apps with serverless APIs and global CDN distribution", "A CDN service", "Legacy web app hosting"], answer: 1, exp: "Azure Static Web Apps automatically builds and deploys static web apps with integrated serverless APIs and global CDN." },
+  { id: 107, q: "What is the 'principle of least privilege' in Azure?", options: ["Use the cheapest Azure services", "Grant users only the minimum permissions needed for their work", "Minimize the number of Azure resources", "Use basic tier services by default"], answer: 1, exp: "Least privilege means assigning users and services only the minimum permissions required for their specific tasks." },
+  { id: 108, q: "Which Azure service provides Infrastructure as Code with JSON?", options: ["Azure CLI", "ARM Templates / Bicep", "Azure Automation", "Azure DevTest Labs"], answer: 1, exp: "ARM Templates (JSON) and Bicep (simplified DSL) enable declarative Infrastructure as Code for repeatable Azure deployments." },
+  { id: 109, q: "What is 'High Availability' in Azure?", options: ["Resources that can be scaled up indefinitely", "Services that remain accessible with minimal downtime, backed by SLAs", "Data that is stored in multiple formats", "Resources that cost less over time"], answer: 1, exp: "High Availability means Azure services remain accessible with minimal downtime, guaranteed by Service Level Agreements." },
+  { id: 110, q: "Sovereign Azure regions such as Azure Government are:", options: ["Available to all customers globally", "Physically and logically isolated, operated for specific compliance requirements", "Cheaper than standard regions", "The same as standard regions with additional features"], answer: 1, exp: "Sovereign regions (Azure Government, Azure China) are physically and logically isolated to meet specific government/compliance requirements." },
+  { id: 111, q: "What is Azure Container Registry (ACR)?", options: ["Running containers without VMs", "Storing, building, and managing container images", "Monitoring container health", "Orchestrating containers at scale"], answer: 1, exp: "Azure Container Registry is a managed Docker registry service for storing, building, and managing container images." },
+  { id: 112, q: "What is a subnet in an Azure VNet?", options: ["Connect VNets across regions", "Segment the VNet address space into smaller networks for organization and security", "Provide internet connectivity to VMs", "Encrypt traffic within the VNet"], answer: 1, exp: "Subnets divide a VNet into smaller network segments, enabling resource grouping and applying NSGs for traffic control." },
+  { id: 113, q: "Azure Spring Apps is designed for:", options: ["Running weather simulations", "Hosting Java Spring Boot microservices", "Spring cleaning your Azure resources", "Running PHP applications"], answer: 1, exp: "Azure Spring Apps is a fully managed service for deploying and running Java Spring Boot microservices." },
+  { id: 114, q: "What is Azure Chaos Studio?", options: ["A tool for managing complex Azure architectures", "A service for experimenting with controlled failures to improve application resilience", "Azure's game development platform", "A testing environment for ARM templates"], answer: 1, exp: "Azure Chaos Studio is a managed chaos engineering service to improve application resilience by simulating faults." },
+  { id: 115, q: "What does Microsoft's Responsible AI framework include?", options: ["AI can be used without restrictions", "Fairness, Reliability, Privacy, Inclusiveness, Transparency, Accountability", "Only using AI for non-critical tasks", "Avoiding AI in security applications"], answer: 1, exp: "Microsoft's Responsible AI principles: Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, and Accountability." },
+  { id: 116, q: "What is Azure Bicep?", options: ["A monitoring tool", "A domain-specific language that simplifies writing ARM templates", "An identity management service", "A container orchestration tool"], answer: 1, exp: "Bicep is a DSL that transpiles to ARM JSON templates, offering simpler syntax for defining Azure infrastructure." },
+  { id: 117, q: "Azure AD Privileged Identity Management (PIM) provides:", options: ["Password synchronization", "Just-in-time privileged access with approval workflows and audit logs", "Bulk user provisioning", "Automatic license assignment"], answer: 1, exp: "Azure AD PIM provides just-in-time privileged access — users activate roles temporarily when needed, reducing standing access." },
+  { id: 118, q: "What is Azure Front Door?", options: ["Physical security for Azure datacenters", "Global load balancing with CDN, WAF, and URL routing for web apps", "Direct ExpressRoute connections", "Azure account management"], answer: 1, exp: "Azure Front Door is a global HTTP/HTTPS load balancer that also provides CDN capabilities, WAF protection, and intelligent URL routing." },
+  { id: 119, q: "Which is correct about Azure resource tags?", options: ["Tags are automatically applied to all child resources", "Tags help with billing, organization, and governance", "Each resource can only have one tag", "Tags are only available on Premium subscriptions"], answer: 1, exp: "Tags (key-value pairs) help with cost allocation, resource organization, automation, and governance. Resources can have multiple tags." },
+  { id: 120, q: "Azure SQL Managed Instance differs from Azure SQL Database because:", options: ["It's serverless", "It provides near 100% SQL Server compatibility for lift-and-shift migrations", "It only supports NoSQL workloads", "It doesn't support backups"], answer: 1, exp: "Azure SQL Managed Instance provides near-complete SQL Server compatibility including SQL Agent, CLR, linked servers." },
+  { id: 121, q: "What is Zone-Redundant Storage (ZRS)?", options: ["Data replicated to a paired region", "Data replicated synchronously across 3 availability zones", "Data replicated within a single datacenter", "Data cached globally"], answer: 1, exp: "ZRS replicates data synchronously across 3 availability zones within a region, protecting against datacenter-level failures." },
+  { id: 122, q: "Azure Information Protection (AIP) is used for:", options: ["Network security information sharing", "Classifying and protecting documents and emails with labels and policies", "Azure portal access protection", "VPN information security"], answer: 1, exp: "Azure Information Protection classifies, labels, and protects sensitive documents and emails based on data classification policies." },
+  { id: 123, q: "What is Azure Service Endpoint?", options: ["DNS endpoints for services", "Secure, direct connectivity from VNet to Azure services over Microsoft backbone", "Public internet endpoints for Azure services", "ExpressRoute connection endpoints"], answer: 1, exp: "Service Endpoints extend VNet private address space to Azure services, routing traffic over Microsoft's backbone instead of the internet." },
+  { id: 124, q: "Azure Cost Alerts notify you when:", options: ["Microsoft changes Azure pricing", "Spending reaches or forecasts to reach a budget threshold you define", "A new Azure region launches", "Your subscription expires"], answer: 1, exp: "Azure Cost Alerts notify you via email when actual or forecasted spending reaches budget thresholds you define." },
+  { id: 125, q: "What is Right-Sizing in Azure cost optimization?", options: ["Making all VMs the same size", "Matching VM sizes to actual workload requirements to avoid over-provisioning", "Using the largest available VM size", "Standardizing on one VM series"], answer: 1, exp: "Right-sizing means analyzing workload resource utilization and selecting appropriately sized VMs/services to avoid paying for unused capacity." },
+  { id: 126, q: "What does Azure Migrate do?", options: ["Migrating data between storage tiers", "Discovering, assessing, and migrating on-premises workloads to Azure", "Moving resources between Azure regions", "Upgrading Azure service tiers"], answer: 1, exp: "Azure Migrate is a central hub for discovering, assessing, and migrating on-premises VMs, databases, and apps to Azure." },
+  { id: 127, q: "Azure Stream Analytics is used for:", options: ["Azure Data Factory ETL jobs", "Real-time analytics on streaming data", "Azure Synapse batch processing", "Azure Data Lake storage"], answer: 1, exp: "Azure Stream Analytics processes and analyzes real-time streaming data from sources like IoT devices and event hubs." },
+  { id: 128, q: "What is the default behavior of deleting an Azure Resource Group?", options: ["Resources are moved to another group", "All resources within the group are also deleted", "Resources are archived", "Resources require individual deletion"], answer: 1, exp: "Deleting a Resource Group deletes ALL resources within it simultaneously — use Resource Locks to prevent accidental deletion." },
+  { id: 129, q: "What is Azure DevOps?", options: ["Only CI/CD pipelines", "Boards, Repos, Pipelines, Test Plans, and Artifacts for software development", "Only source code management", "Only project management"], answer: 1, exp: "Azure DevOps provides a complete DevOps toolchain: Boards (work tracking), Repos (git), Pipelines (CI/CD), Test Plans, and Artifacts." },
+  { id: 130, q: "What is Azure Private DNS Zone?", options: ["Public DNS resolution for Azure services", "Custom DNS name resolution within Azure VNets privately", "DNS caching at CDN edge", "External DNS hosting"], answer: 1, exp: "Azure Private DNS Zones provide name resolution for resources within Azure VNets without needing a custom DNS solution." },
+  { id: 131, q: "What is a Fault Domain in an Availability Set?", options: ["A group of VMs that update together", "A group of VMs sharing the same power source and network switch", "A group of VMs in different regions", "A group of VMs with the same size"], answer: 1, exp: "A Fault Domain is a logical grouping of hardware that shares a common power source and network switch — protects against hardware failure." },
+  { id: 132, q: "What is Azure Load Balancer?", options: ["Encrypts traffic between services", "Distributes inbound network traffic across multiple backend resources at Layer 4", "Provides DNS resolution", "Monitors application health only"], answer: 1, exp: "Azure Load Balancer operates at Layer 4 (TCP/UDP) and distributes inbound traffic across backend VM instances." },
+  { id: 133, q: "Azure Event Grid provides:", options: ["Real-time data streaming ingestion", "Reactive event-driven programming using publish-subscribe model", "SQL event logging", "IoT device event storage"], answer: 1, exp: "Azure Event Grid is an event routing service using publish-subscribe model enabling reactive, event-driven architectures." },
+  { id: 134, q: "What is an Azure App Service Plan?", options: ["The price of Azure subscriptions", "Compute resources (region, number, size of VM instances) for App Service apps", "The deployment pipeline for applications", "The network configuration for web apps"], answer: 1, exp: "App Service Plan specifies the region, VM size, and number of instances that host your App Service applications." },
+  { id: 135, q: "Azure Defender for Containers:", options: ["Manages container registries", "Protects Kubernetes clusters and container images from threats", "Deploys containers automatically", "Monitors container performance only"], answer: 1, exp: "Microsoft Defender for Containers protects AKS clusters, container registries, and container images from security threats." },
+  { id: 136, q: "Azure PowerShell cmdlets all start with:", options: ["Azure-", "Az (e.g. Connect-Az, Get-Az)", "AzureRM-", "PS-Az"], answer: 1, exp: "Modern Azure PowerShell module uses Az prefix: Connect-AzAccount, Get-AzVM, New-AzResourceGroup, etc." },
+  { id: 137, q: "What is Azure Cognitive Search?", options: ["Web-based search for Azure Portal", "AI-powered full-text search capabilities for your own content", "Security vulnerability scanning", "DNS record searching"], answer: 1, exp: "Azure AI Search (Cognitive Search) provides enterprise-grade full-text search with AI enrichment for applications." },
+  { id: 138, q: "Which Azure service enables running Linux or Windows containers without managing VMs?", options: ["Azure VMs", "Azure Kubernetes Service", "Azure Container Instances", "Azure VM Scale Sets"], answer: 2, exp: "Azure Container Instances (ACI) lets you run containers on-demand without provisioning or managing VMs." },
+  { id: 139, q: "Azure AD Single Sign-On (SSO) means:", options: ["A single strong password for all applications", "One login provides access to multiple connected applications", "All Azure services use the same pricing", "One Azure account for multiple subscriptions"], answer: 1, exp: "SSO allows users to authenticate once with Azure AD and access all connected applications without logging in again." },
+  { id: 140, q: "What is the purpose of Azure DNS?", options: ["Filter malicious DNS requests", "Host DNS domains and resolve DNS queries using Microsoft's global infrastructure", "Encrypt DNS traffic", "Create private DNS servers on VMs"], answer: 1, exp: "Azure DNS hosts your DNS domains and provides name resolution using Microsoft's global infrastructure." },
+  { id: 141, q: "Azure Managed Disks provide:", options: ["Network attached storage for multiple VMs simultaneously", "Persistent block storage volumes for Azure VMs managed by Azure", "Object storage for applications", "File storage with SMB support"], answer: 1, exp: "Azure Managed Disks are highly available persistent block storage volumes for Azure VMs, where Azure manages storage accounts." },
+  { id: 142, q: "Azure Data Factory is used for:", options: ["Running machine learning models", "ETL/ELT data integration and transformation pipelines", "Storing large amounts of data", "Real-time data streaming only"], answer: 1, exp: "Azure Data Factory is a managed ETL service for creating data integration and transformation pipelines." },
+  { id: 143, q: "What is Azure Machine Learning?", options: ["Monitoring Azure resource metrics", "Building, training, and deploying machine learning models at scale", "Managing database schemas", "Creating ARM templates visually"], answer: 1, exp: "Azure Machine Learning provides tools to build, train, track experiments, and deploy ML models at scale." },
+  { id: 144, q: "What is the Azure Trust Center?", options: ["A support ticketing system", "Resource providing information about Microsoft's security, privacy, and compliance", "An Azure cost management portal", "A compliance enforcement tool"], answer: 1, exp: "The Microsoft Trust Center provides documentation about Microsoft's approach to security, privacy, compliance, and transparency." },
+  { id: 145, q: "Azure Table Storage is best described as:", options: ["A managed relational database", "A NoSQL key-attribute store for semi-structured data", "File storage with SMB support", "Time-series data storage"], answer: 1, exp: "Azure Table Storage is a NoSQL key-value store designed for storing semi-structured data at large scale and low cost." },
+  { id: 146, q: "What enables automatic database failover in Azure?", options: ["Azure Database for PostgreSQL only", "Azure SQL Failover Groups and Cosmos DB auto-replication", "Manual failover scripts only", "Azure Backup"], answer: 1, exp: "Azure SQL Failover Groups and Azure Cosmos DB (with multi-region writes) both provide automatic database failover." },
+  { id: 147, q: "What is the Azure Update Management?", options: ["Updating Azure service pricing", "Managing OS and software updates across Windows and Linux VMs", "Updating ARM templates", "Migrating to newer Azure services"], answer: 1, exp: "Azure Update Management provides update compliance assessment and deployment across Windows and Linux VMs." },
+  { id: 148, q: "Azure Blob Storage supports:", options: ["Only basic read/write operations", "Versioning, soft delete, and point-in-time restore", "Only hot tier storage", "Maximum 1TB per blob"], answer: 1, exp: "Azure Blob Storage supports versioning (maintain previous versions), soft delete (recover deleted blobs), and point-in-time restore." },
+  { id: 149, q: "What is Azure Quantum?", options: ["Quantum mechanics educational content", "Access to quantum hardware and quantum-inspired optimization solutions", "Quantum-encrypted storage", "Ultra-fast classical computing"], answer: 1, exp: "Azure Quantum provides access to diverse quantum hardware and quantum-inspired optimization algorithms for solving complex problems." },
+  { id: 150, q: "What is Microsoft Sentinel's SOAR capability?", options: ["Storing security logs", "Security Orchestration, Automation, and Response — automate incident responses", "Scanning VMs for vulnerabilities", "Generating compliance reports"], answer: 1, exp: "Sentinel's SOAR capability automates responses to security incidents using playbooks built with Azure Logic Apps." },
+  { id: 151, q: "Which Azure service provides 'Just-In-Time VM access'?", options: ["Azure Bastion", "Microsoft Defender for Cloud", "Azure Firewall", "Azure AD PIM"], answer: 1, exp: "Microsoft Defender for Cloud provides Just-In-Time VM access — blocks inbound traffic by default, opens ports temporarily when needed." },
+  { id: 152, q: "What is the purpose of Azure Cost Management budgets?", options: ["Automatically stop spending when budget is hit", "Set spending limits and receive alerts when thresholds are reached", "Negotiate lower prices with Microsoft", "Reallocate costs between departments automatically"], answer: 1, exp: "Azure Budgets set spending limits and trigger alerts when actual or forecast spend reaches defined thresholds." },
+  { id: 153, q: "Azure Bot Service is used for:", options: ["Monitoring bots attacking Azure", "Building, deploying, and managing intelligent chatbots", "Automating Azure resource management", "AI-powered billing optimization"], answer: 1, exp: "Azure Bot Service provides an integrated environment to build, test, deploy, and manage intelligent bots across channels." },
+  { id: 154, q: "What does FIDO2 provide in Azure AD?", options: ["Federation with social identity providers", "Hardware security key-based authentication without passwords", "Face recognition authentication", "SMS-based one-time passwords"], answer: 1, exp: "FIDO2 security keys are hardware devices (USB, NFC) providing strong phishing-resistant passwordless authentication." },
+  { id: 155, q: "Azure Network Watcher is used for:", options: ["Monitoring Azure AD sign-ins", "Network monitoring, diagnostics, and performance visibility", "Storage account diagnostics", "Cost monitoring for network services"], answer: 1, exp: "Azure Network Watcher provides tools to monitor, diagnose, and gain insights into Azure network performance and health." },
+  { id: 156, q: "What is Azure SignalR Service?", options: ["Signal processing for IoT", "Real-time web functionality like chat, live dashboards, and notifications", "Monitoring signal strength in datacenters", "Azure AD sign-in signals"], answer: 1, exp: "Azure SignalR Service provides real-time bidirectional communication capabilities for web applications." },
+  { id: 157, q: "What is the difference between Azure Backup and Azure Site Recovery?", options: ["They are the same service", "Backup protects data from corruption/deletion; Site Recovery protects against full site failures", "Backup is for VMs only", "Backup is faster to restore"], answer: 1, exp: "Azure Backup focuses on data protection (backup/restore). Site Recovery focuses on business continuity by replicating workloads to a secondary region." },
+  { id: 158, q: "Azure Logic Apps vs Azure Functions — which is code-first?", options: ["Logic Apps is code-first", "Functions is code-first", "Both are code-first", "Neither is code-first"], answer: 1, exp: "Azure Functions is code-first (write code in C#, JavaScript, Python, etc.). Logic Apps is designer-first (visual workflow with connectors)." },
+  { id: 159, q: "What is Azure Deployment Environments?", options: ["Monitoring deployment health", "Dev teams spinning up app infrastructure using project-based templates", "Creating ARM templates", "Managing Azure regions"], answer: 1, exp: "Azure Deployment Environments lets dev teams spin up consistent, compliant on-demand application infrastructure from catalog templates." },
+  { id: 160, q: "Azure CLI commands all start with:", options: ["azure", "az", "azcli", "azure-cli"], answer: 1, exp: "All Azure CLI commands start with 'az' — for example: az login, az group create, az vm list." },
+  { id: 161, q: "What is Azure global reach?", options: ["Elasticity", "Scalability", "Deploying from 60+ regions worldwide to serve customers globally", "Fault tolerance"], answer: 2, exp: "Azure's global reach with 60+ regions worldwide allows deploying close to customers everywhere and meeting data residency requirements." },
+  { id: 162, q: "Which storage redundancy option replicates synchronously across 3 AZs?", options: ["LRS", "GRS", "ZRS", "RA-GRS"], answer: 2, exp: "ZRS (Zone-Redundant Storage) replicates data synchronously across 3 availability zones within a single region." },
+  { id: 163, q: "What is Azure Application Insights primarily for?", options: ["Infrastructure monitoring", "Application Performance Monitoring — tracking live requests, errors, and performance", "Network monitoring", "Cost monitoring"], answer: 1, exp: "Application Insights is an APM service tracking performance, errors, user behavior, and dependencies in live web applications." },
+  { id: 164, q: "Azure China is operated by:", options: ["Microsoft directly", "21Vianet (a Chinese company)", "The Chinese government", "A Microsoft-Chinese joint venture"], answer: 1, exp: "Azure China is operated by 21Vianet, a Chinese company, as a legally separate cloud to meet Chinese data sovereignty regulations." },
+  { id: 165, q: "What is the Azure Well-Architected Review?", options: ["A billing audit tool", "A self-assessment tool to evaluate workload alignment with WAF pillars", "A security scanning service", "An architecture diagram tool"], answer: 1, exp: "The Azure Well-Architected Review provides a self-assessment to evaluate workloads against the 5 WAF pillars." },
+  { id: 166, q: "Azure Monitoring Workbooks provide:", options: ["Automated remediation of alerts", "Interactive reports combining data from multiple Azure Monitor sources", "Billing dashboards only", "ARM template visualization"], answer: 1, exp: "Azure Monitor Workbooks are interactive documents combining text, analytics queries, metrics, and parameters into rich visual reports." },
+  { id: 167, q: "Which Azure feature provides automatic OS patching for VMs?", options: ["Azure Monitor", "Automatic VM Guest Patching", "Azure Advisor", "Azure Security Center"], answer: 1, exp: "Automatic VM Guest Patching provides safe, automated OS-level patching for Azure VMs with staged rollout." },
+  { id: 168, q: "What is Azure Arc-enabled data services?", options: ["Managing data in Azure only", "Running Azure data services on any Kubernetes cluster, on-premises or in other clouds", "Azure Arc pricing for data services", "A data archiving service"], answer: 1, exp: "Azure Arc-enabled data services let you run Azure SQL Managed Instance and Azure PostgreSQL on any Kubernetes cluster." },
+  { id: 169, q: "What is Microsoft Purview Data Map?", options: ["A visual map of Azure regions", "Automated data discovery and classification across your data estate", "A compliance documentation tool", "A network topology visualization"], answer: 1, exp: "Microsoft Purview Data Map automatically discovers and classifies data assets across your entire data estate." },
+  { id: 170, q: "Azure Load Testing is used for:", options: ["Testing network load balancers", "Generating high-scale load to identify performance bottlenecks in apps", "Load balancing test environments", "Testing ARM template deployments"], answer: 1, exp: "Azure Load Testing generates high-scale traffic to identify performance bottlenecks and validate that apps can handle load." },
+  { id: 171, q: "What is the purpose of Azure AD Conditional Access?", options: ["Replace MFA entirely", "Grant or block access based on conditions like identity, location, device, and risk", "Manage RBAC roles automatically", "Sync on-premises AD with Azure AD"], answer: 1, exp: "Conditional Access evaluates conditions (user, location, device, app, risk) and enforces the appropriate access policy." },
+  { id: 172, q: "What is Azure Private Endpoint?", options: ["A public internet endpoint for Azure services", "A network interface that connects privately to an Azure service via Private Link", "An endpoint for ExpressRoute connections", "A firewall endpoint for NSG rules"], answer: 1, exp: "Azure Private Endpoint is a network interface using Private Link to connect privately to an Azure service without internet exposure." },
+  { id: 173, q: "Azure Defender for Servers provides:", options: ["Server performance monitoring only", "Threat detection, vulnerability assessment, and just-in-time VM access for servers", "Server cost optimization", "Automatic server patching only"], answer: 1, exp: "Microsoft Defender for Servers provides threat detection, vulnerability assessment, and JIT VM access for Windows and Linux servers." },
+  { id: 174, q: "What is Azure Spring Apps used for?", options: ["Running weather simulations", "Fully managed Java Spring Boot microservices hosting", "PHP application hosting", "Spring data storage services"], answer: 1, exp: "Azure Spring Apps is a fully managed service for deploying and running Java Spring Boot and Steeltoe .NET microservices." },
+  { id: 175, q: "Azure Active Directory B2C is designed for:", options: ["Enterprise employee authentication only", "Customer-facing apps needing consumer identity management with social login", "Azure service-to-service authentication", "On-premises Active Directory replacement"], answer: 1, exp: "Azure AD B2C handles consumer identity for apps — supports social login (Google, Facebook), local accounts, and custom auth flows." },
+  { id: 176, q: "What does 'disaster recovery' mean in cloud terms?", options: ["Preventing all outages", "Restoring data and applications after a catastrophic failure or regional outage", "Backing up data every hour", "Monitoring for potential failures only"], answer: 1, exp: "Disaster recovery involves replicating and restoring data and applications after a major failure (natural disaster, regional outage, etc.)." },
+  { id: 177, q: "What is Azure Backup used for?", options: ["Replicating VMs between regions", "Protecting data from accidental deletion, corruption, and ransomware with backup/restore", "Creating test environments from production data", "Archiving cold storage data"], answer: 1, exp: "Azure Backup provides data protection through backup and restore for Azure VMs, databases, files, and on-premises workloads." },
+  { id: 178, q: "Which Azure service provides a managed Apache Kafka endpoint?", options: ["Azure Service Bus", "Azure Event Grid", "Azure Event Hubs with Kafka surface", "Azure Stream Analytics"], answer: 2, exp: "Azure Event Hubs has a Kafka-compatible endpoint, allowing Kafka applications to work with Event Hubs without changing client code." },
+  { id: 179, q: "What is Azure Automation State Configuration?", options: ["A CI/CD pipeline tool", "DSC (Desired State Configuration) service to enforce consistent server configuration", "A deployment automation tool", "A compliance audit tool"], answer: 1, exp: "Azure Automation State Configuration uses PowerShell DSC to enforce and maintain consistent configuration across VMs." },
+  { id: 180, q: "Azure Monitor Action Groups are used for:", options: ["Grouping Azure resources together", "Defining WHO gets notified and HOW when an alert fires", "Grouping monitoring rules", "Creating dashboard views"], answer: 1, exp: "Action Groups define the list of notification methods and actions (email, SMS, webhook, runbook) triggered when an alert fires." },
+  { id: 181, q: "What is Azure Advisor's Cost recommendation?", options: ["Negotiate pricing with Microsoft", "Identify underutilized resources, right-sizing opportunities, and reserved instance candidates", "Switch to a different Azure region", "Disable monitoring to save costs"], answer: 1, exp: "Azure Advisor Cost recommendations identify underutilized VMs, unused resources, and right-sizing or Reserved Instance opportunities." },
+  { id: 182, q: "Which Azure service provides real-time stream processing with SQL-like queries?", options: ["Azure Data Factory", "Azure Stream Analytics", "Azure Synapse Analytics", "Azure Databricks"], answer: 1, exp: "Azure Stream Analytics uses SQL-like queries to process and analyze real-time streaming data at scale." },
+  { id: 183, q: "What is the purpose of Azure Policy remediation tasks?", options: ["Creating new Azure Policy definitions", "Automatically fixing existing non-compliant resources", "Running compliance reports", "Notifying users of policy violations"], answer: 1, exp: "Azure Policy remediation tasks automatically bring existing non-compliant resources into compliance with DeployIfNotExists and Modify policies." },
+  { id: 184, q: "Azure Arc enables you to:", options: ["Only manage Azure resources", "Manage servers, Kubernetes clusters, and data services running anywhere from Azure control plane", "Connect Azure regions privately", "Enable public internet access to private VNets"], answer: 1, exp: "Azure Arc extends Azure control plane capabilities to manage resources on-premises, in other clouds, and at the edge." },
+  { id: 185, q: "What is Azure Cognitive Services Language Understanding (LUIS)?", options: ["Language translation service", "A service that builds natural language understanding into apps", "Spell-check API for applications", "Azure documentation search service"], answer: 1, exp: "LUIS (Language Understanding) is part of Azure AI Services — it helps apps understand what users mean in natural language input." },
+  { id: 186, q: "What is an Azure Availability Zone guarantee?", options: ["100% uptime guaranteed", "Protection from individual VM failures", "Protection from individual datacenter failures within a region", "Protection from regional failures"], answer: 2, exp: "Availability Zones protect against individual datacenter failures — if one zone goes down, the others continue serving traffic." },
+  { id: 187, q: "Azure Service Health 'Health Advisories' are:", options: ["Critical service outages", "Planned deprecations and breaking changes that may affect your services", "Security bulletins", "Cost optimization suggestions"], answer: 1, exp: "Health Advisories inform you about Azure changes that may require your action, like feature deprecations or breaking changes." },
+  { id: 188, q: "What is the purpose of Azure Cost Management's 'Cost Analysis'?", options: ["Predict future Azure service pricing", "Visualize and analyze your Azure spending by service, resource, tag, or time period", "Create budget alerts", "Compare costs with competitors"], answer: 1, exp: "Cost Analysis lets you visualize and explore your Azure spending with filters by service, resource group, tag, location, and time." },
+  { id: 189, q: "Which Azure identity feature prevents standing privileged access?", options: ["Conditional Access", "Azure AD PIM (Privileged Identity Management)", "RBAC Contributor role", "Azure Key Vault access policies"], answer: 1, exp: "PIM provides just-in-time privileged access — users activate elevated roles temporarily only when needed, with full audit trail." },
+  { id: 190, q: "What is Azure Dedicated Host?", options: ["A VM with premium SSD", "Physical server dedicated to your organization — no VM sharing with other customers", "A managed Kubernetes node pool", "An on-premises server managed by Azure"], answer: 1, exp: "Azure Dedicated Host provides a physical server dedicated to a single organization — ensures no co-tenancy for compliance requirements." },
+  { id: 191, q: "What is Microsoft Entra ID?", options: ["A new Azure storage service", "The new name for Azure Active Directory", "Microsoft's on-premises directory service", "A new Azure networking service"], answer: 1, exp: "Microsoft Entra ID is the new name for Azure Active Directory — Microsoft's cloud-based identity and access management service." },
+  { id: 192, q: "Which region pair feature enables prioritized recovery?", options: ["Region pairs update simultaneously", "In a region pair, at least one region is prioritized for recovery during broad outages", "Region pairs share the same availability zones", "Region pairs always have the same SLA"], answer: 1, exp: "During broad outages, Microsoft prioritizes recovery of at least one region in each region pair to restore service faster." },
+  { id: 193, q: "What is Azure Sphere?", options: ["A cloud security dashboard", "An end-to-end IoT security solution for microcontroller-based devices", "A cloud storage sphere redundancy option", "Azure's global network backbone"], answer: 1, exp: "Azure Sphere is a secured, connected microcontroller unit (MCU) platform for IoT devices with built-in security from chip to cloud." },
+  { id: 194, q: "Azure Monitor Alerts support which action types?", options: ["Only email notifications", "Email, SMS, push notifications, webhooks, Azure Functions, and Logic Apps", "Only SMS and email", "Only ITSM tool integrations"], answer: 1, exp: "Azure Monitor Alert Action Groups support email, SMS, push notifications, webhooks, Azure Functions, Logic Apps, and ITSM integrations." },
+  { id: 195, q: "What is a key benefit of using Azure Resource Manager templates?", options: ["They automatically optimize costs", "They enable idempotent, repeatable infrastructure deployments from version-controlled code", "They require no technical knowledge", "They automatically scale resources"], answer: 1, exp: "ARM templates are idempotent (safe to run multiple times), declarative, and enable version-controlled, repeatable infrastructure deployments." },
+  { id: 196, q: "Azure role assignments apply at which scopes?", options: ["Only at resource level", "Management Group, Subscription, Resource Group, and individual Resource", "Only at subscription and resource group level", "Only at management group level"], answer: 1, exp: "RBAC role assignments can be applied at Management Group, Subscription, Resource Group, or individual Resource scope — permissions inherit downward." },
+  { id: 197, q: "What is Azure App Configuration?", options: ["App Service configuration management", "A centralized service for managing application settings and feature flags", "Azure AD app registration settings", "Azure Functions configuration service"], answer: 1, exp: "Azure App Configuration is a centralized service to manage application settings, connection strings, and feature flags separately from code." },
+  { id: 198, q: "What is the purpose of an Azure Service Principal?", options: ["A human user account in Azure AD", "A security identity used by apps and services to authenticate and access Azure resources", "A premium Azure support plan contact", "A managed identity for VMs only"], answer: 1, exp: "A Service Principal is an identity created for apps, services, and automation tools to authenticate to Azure and access specific resources." },
+  { id: 199, q: "Which Azure region pair protects against?", options: ["Individual VM failures", "Single datacenter failures", "Regional or large-scale geographic disasters", "Individual network switch failures"], answer: 2, exp: "Region pairs protect against large-scale geographic disasters or widespread regional failures, with at least 300 miles separation." },
+  { id: 200, q: "Which AZ-900 exam domain has the highest weighting?", options: ["Cloud Concepts (15-20%)", "Azure Architecture & Services (35-40%)", "Azure Management & Governance (30-35%)", "Identity & Security (25-30%)"], answer: 1, exp: "Azure Architecture & Services carries the highest exam weight (35-40%), making it the most important domain to master for AZ-900." },
+];
+
+// ─── STUDY CONTENT ────────────────────────────────────────────────────────────
+const STUDY_TOPICS = [
+  {
+    id: "cloud-concepts",
+    title: "Cloud Concepts",
+    icon: "☁️",
+    color: "#0078d4",
+    examWeight: "15–20%",
+    tagline: "Understand the WHY behind cloud computing",
+    keyFact: "Azure is OpEx (pay-as-you-go). On-premises is CapEx (upfront purchase). This distinction appears on almost every exam.",
+    sections: [
+      {
+        type: "cards", icon: "⚡", label: "6 Core Cloud Benefits",
+        items: [
+          { icon: "🟢", title: "High Availability", body: "Services stay accessible with minimal downtime. Azure SLAs guarantee specific uptime percentages (99.9% to 99.99%) backed by financial credits if missed." },
+          { icon: "📈", title: "Scalability", body: "Scale UP (vertical) = upgrade to a bigger VM. Scale OUT (horizontal) = add more VM instances. Handle growing workloads without redesigning." },
+          { icon: "🔄", title: "Elasticity", body: "Resources automatically adjust in real-time as demand rises or falls. Unlike scalability, elasticity is automatic — no human intervention needed." },
+          { icon: "🚀", title: "Agility", body: "Provision and deploy IT resources in minutes instead of weeks. Quickly experiment, launch new products, and respond to market changes." },
+          { icon: "🌍", title: "Geo-distribution", body: "Deploy applications to Azure datacenters closest to your users worldwide. Reduces network latency and improves user experience globally." },
+          { icon: "🛟", title: "Disaster Recovery", body: "Built-in data backup, geo-replication, and automatic failover. If one region fails, your app switches to another region automatically." },
+        ],
+      },
+      {
+        type: "versus", icon: "💰", label: "CapEx vs OpEx — Key Exam Concept",
+        left: {
+          title: "CapEx — On-Premises", color: "#e74c3c", icon: "🏢",
+          points: ["Large upfront hardware investment required", "You own the physical servers and network", "Assets depreciate over time (3–5 years)", "IT team responsible for all maintenance", "Slow and expensive to scale up or down", "Capacity planning required years in advance"],
+        },
+        right: {
+          title: "OpEx — Azure Cloud", color: "#00b294", icon: "☁️",
+          points: ["Zero upfront cost — no hardware to buy", "Pay only for what you consume monthly", "No depreciation — provider handles hardware lifecycle", "Microsoft manages all physical infrastructure", "Scale instantly — add or remove resources in seconds", "No capacity planning needed — elastic on demand"],
+        },
+      },
+      {
+        type: "model-table", icon: "🧩", label: "Service Models — IaaS / PaaS / SaaS",
+        rows: [
+          { model: "IaaS", color: "#0078d4", control: 90, youManage: "OS · Middleware · Apps · Data · Runtime", azureManages: "Physical hardware · Network · Datacenter · Virtualization", examples: "Azure Virtual Machines · Azure Disk Storage", tip: "Most control — think 'I am responsible for the OS'" },
+          { model: "PaaS", color: "#00b294", control: 50, youManage: "Applications · Data only", azureManages: "OS · Runtime · Middleware · Hardware · Scaling", examples: "Azure App Service · Azure SQL Database · Azure Functions", tip: "Focus on code — Azure manages the platform" },
+          { model: "SaaS", color: "#8764b8", control: 10, youManage: "Nothing — just configure and use it", azureManages: "Everything from hardware to application code", examples: "Microsoft 365 · Teams · Dynamics 365", tip: "Least control — provider manages everything end-to-end" },
+        ],
+      },
+      {
+        type: "cards", icon: "🌐", label: "Cloud Deployment Models",
+        items: [
+          { icon: "🌐", title: "Public Cloud", body: "Azure, AWS, GCP — shared multi-tenant infrastructure. No CapEx, maximum scalability and agility. Resources owned and operated by the cloud provider." },
+          { icon: "🏢", title: "Private Cloud", body: "Dedicated to one organisation. On-premises datacenter or hosted exclusively for you. Maximum control, compliance, and security. Higher cost." },
+          { icon: "🔀", title: "Hybrid Cloud", body: "Combines public + private cloud. Most flexible option — run sensitive data on-premises, burst to public cloud for peak demand. Azure Arc enables management of both from one place." },
+        ],
+      },
+      {
+        type: "matrix", icon: "🤝", label: "Shared Responsibility Model",
+        note: "Customer always owns: Data, Identities, Devices and Accounts — regardless of model.",
+        rows: [
+          { item: "Physical Datacenter / Host / Network", iaas: "Azure", paas: "Azure", saas: "Azure" },
+          { item: "Virtualisation (Hypervisor)", iaas: "Azure", paas: "Azure", saas: "Azure" },
+          { item: "Operating System", iaas: "You", paas: "Azure", saas: "Azure" },
+          { item: "Network Controls", iaas: "You", paas: "Shared", saas: "Azure" },
+          { item: "Application", iaas: "You", paas: "You", saas: "Azure" },
+          { item: "Identity & Directory", iaas: "You", paas: "You", saas: "You ✦" },
+          { item: "Data & Information", iaas: "You", paas: "You", saas: "You ✦" },
+          { item: "Devices & Accounts", iaas: "You", paas: "You", saas: "You ✦" },
+        ],
+      },
+      {
+        type: "examples", icon: "💡", label: "Real-World Scenarios",
+        items: [
+          "Netflix uses public cloud for global streaming — elasticity scales to 200M+ concurrent users during peak hours",
+          "A bank uses hybrid cloud: website on public cloud for cost savings, transaction data on private cloud for compliance",
+          "Azure Virtual Machines = IaaS — your team manages the OS, patches, and application stack completely",
+          "Azure SQL Database = PaaS — Microsoft patches the engine and handles HA. You only manage your schema and data",
+          "Microsoft Teams = SaaS — Microsoft manages absolutely everything. You just sign in and use it",
+        ],
+      },
+      {
+        type: "tips", icon: "🎯", label: "Exam Tips",
+        color: "#0078d4",
+        items: [
+          "Azure = OpEx. On-premises = CapEx. This appears on almost every AZ-900 exam.",
+          "IaaS = most control. SaaS = least control. Remember: IaaS → PaaS → SaaS = decreasing control.",
+          "Hybrid cloud = MOST FLEXIBLE deployment model. Private cloud = MOST CONTROL.",
+          "Elasticity is AUTOMATIC (no human needed). Scalability can be manual or automatic.",
+          "Customer ALWAYS owns: data, identities, devices — even in SaaS (marked ✦ in the table above).",
+        ],
+      },
+    ],
+  },
+  {
+    id: "azure-architecture",
+    title: "Azure Architecture & Services",
+    icon: "🏗️",
+    color: "#00b294",
+    examWeight: "35–40%",
+    tagline: "The biggest exam section — know every service and when to use it",
+    keyFact: "Availability Zones = different buildings in the same city. Availability Sets = different racks in the same building.",
+    sections: [
+      {
+        type: "hierarchy", icon: "🗂️", label: "Azure Resource Organisation Hierarchy",
+        note: "Governance (Policy + RBAC) applied at a higher level is INHERITED by everything below it.",
+        levels: [
+          { icon: "🏛️", name: "Management Groups", color: "#8764b8", badge: "Top Level", desc: "Organise multiple subscriptions. Apply policies and RBAC that all child subscriptions inherit. Root management group sits above all." },
+          { icon: "📋", name: "Subscriptions", color: "#0078d4", badge: "Billing & Access", desc: "The billing boundary AND access control boundary. Each subscription generates its own invoice. Multiple subscriptions per tenant allowed." },
+          { icon: "📁", name: "Resource Groups", color: "#00b294", badge: "Logical Container", desc: "Logical container for related resources. Deleting a resource group deletes ALL resources inside it. Each resource belongs to exactly one RG." },
+          { icon: "⚙️", name: "Resources", color: "#f0ad4e", badge: "Individual Service", desc: "The actual Azure services: VMs, databases, storage accounts, virtual networks. Each resource has a type, name, location, and tags." },
+        ],
+      },
+      {
+        type: "infra", icon: "🌍", label: "Global Infrastructure — Critical Distinctions",
+        items: [
+          { icon: "📍", title: "Region", badge: "60+ worldwide", color: "#0078d4", body: "A geographic area containing one or more datacenters connected by low-latency networks. Examples: East US, West Europe, Southeast Asia. You choose the region when creating resources." },
+          { icon: "🔗", title: "Region Pair", badge: "300+ miles apart", color: "#00b294", body: "Every region is paired with another region at least 300 miles away. If a disaster affects one region, the paired region handles failover. Azure replicates certain services automatically across pairs." },
+          { icon: "🏢", title: "Availability Zone", badge: "Min 3 per region", color: "#8764b8", body: "Physically SEPARATE buildings within the same region — each with its own independent power, cooling, and networking. Deploying across zones protects against datacenter-level failures. Gives 99.99% SLA." },
+          { icon: "🗄️", title: "Availability Set", badge: "Same datacenter", color: "#f0ad4e", body: "Logical grouping of VMs across fault domains (separate hardware racks/power) and update domains (sequential update groups) WITHIN ONE datacenter. Provides 99.95% SLA. No extra cost." },
+        ],
+      },
+      {
+        type: "sla-table", icon: "📊", label: "SLA Uptime Reference — Know These Numbers",
+        items: [
+          { config: "Single VM with Premium SSD", sla: "99.9%", color: "#f0ad4e", downtime: "~8.7 hrs/year" },
+          { config: "2+ VMs in Availability Set", sla: "99.95%", color: "#0078d4", downtime: "~4.4 hrs/year" },
+          { config: "2+ VMs across Availability Zones", sla: "99.99%", color: "#00b294", downtime: "~52 mins/year" },
+          { config: "Azure SQL Database", sla: "99.99%", color: "#00b294", downtime: "~52 mins/year" },
+          { config: "Azure Cosmos DB (multi-region)", sla: "99.999%", color: "#8764b8", downtime: "~5 mins/year" },
+        ],
+      },
+      {
+        type: "grid", icon: "⚙️", label: "Compute Services — Which to Use When",
+        items: [
+          { icon: "🖥️", name: "Azure Virtual Machines", tag: "IaaS", tagColor: "#0078d4", body: "Full OS control. Lift-and-shift from on-premises. Custom software. Choose when you need to manage the OS or run legacy apps." },
+          { icon: "📈", name: "VM Scale Sets", tag: "IaaS", tagColor: "#0078d4", body: "Auto-scale identical VMs up or down based on demand. All VMs run the same image. Perfect for web tiers and batch workloads." },
+          { icon: "📱", name: "App Service", tag: "PaaS", tagColor: "#00b294", body: "Host web apps, REST APIs, and mobile backends. Supports .NET, Java, Node.js, Python, PHP. No OS management. Built-in auto-scaling." },
+          { icon: "📦", name: "Container Instances (ACI)", tag: "PaaS", tagColor: "#00b294", body: "Run a single container quickly without any orchestration. Pay per second. Best for simple tasks, batch jobs, CI/CD steps." },
+          { icon: "☸️", name: "Kubernetes Service (AKS)", tag: "PaaS", tagColor: "#00b294", body: "Azure manages the Kubernetes control plane (free). You manage worker nodes. For complex containerised microservices at scale." },
+          { icon: "⚡", name: "Azure Functions", tag: "Serverless", tagColor: "#f0ad4e", body: "Event-driven code execution. Pay per millisecond of execution. No servers to manage. Triggers: HTTP, timer, Blob, Queue, Event Hub." },
+          { icon: "🖱️", name: "Azure Virtual Desktop", tag: "SaaS", tagColor: "#8764b8", body: "Cloud-based Windows desktop and app virtualisation. Access from any device. Multi-session Windows 10/11 reduces costs significantly." },
+          { icon: "🔮", name: "Azure Arc", tag: "Hybrid", tagColor: "#e74c3c", body: "Extend Azure management to ANY environment — on-premises servers, other clouds, edge locations. Single control plane for everything." },
+        ],
+      },
+      {
+        type: "versus", icon: "🌐", label: "VPN Gateway vs ExpressRoute — Critical Difference",
+        left: {
+          title: "VPN Gateway", color: "#f0ad4e", icon: "🔒",
+          points: ["Encrypted IPsec/IKE tunnel over public internet", "Lower cost — no dedicated circuit needed", "Easier and faster to set up (hours not weeks)", "Speeds up to ~10 Gbps with VPN Gateway SKUs", "Good for most hybrid workloads and remote users", "Reliability depends on internet connectivity"],
+        },
+        right: {
+          title: "ExpressRoute", color: "#00b294", icon: "⚡",
+          points: ["Private DEDICATED connection — NOT over internet", "Higher cost — requires connectivity provider", "Longer setup (weeks to months with provider)", "Speeds from 50 Mbps up to 100 Gbps", "For compliance, banking, large data transfers", "More reliable, consistent latency, no internet exposure"],
+        },
+      },
+      {
+        type: "storage", icon: "💾", label: "Storage Services & Blob Access Tiers",
+        services: [
+          { icon: "🖼️", name: "Blob Storage", color: "#0078d4", body: "Object storage for unstructured data — images, videos, documents, logs, backups. Most scalable Azure storage. Accessed via REST API." },
+          { icon: "📂", name: "Azure Files", color: "#00b294", body: "Managed SMB and NFS file shares mountable on Windows, Linux, and macOS. Replace or augment on-premises file servers in the cloud." },
+          { icon: "📨", name: "Queue Storage", color: "#8764b8", body: "Stores up to 64KB messages for asynchronous processing. Decouples application components. Messages can be held up to 7 days." },
+          { icon: "🗃️", name: "Table Storage", color: "#f0ad4e", body: "NoSQL key-value store for semi-structured data. Schemaless. Best for IoT device data, user preferences, web session data." },
+        ],
+        tiers: [
+          { name: "Hot 🔥", color: "#e74c3c", body: "Frequently accessed data. Highest storage cost per GB, lowest retrieval cost. Default tier for new storage accounts." },
+          { name: "Cool ❄️", color: "#0078d4", body: "Infrequently accessed data (minimum 30 days). Lower storage cost, slightly higher retrieval cost. Good for monthly backups." },
+          { name: "Archive 📦", color: "#6b7a99", body: "Rarely accessed data. Lowest storage cost. Data is offline — rehydration to Hot/Cool takes up to 15 hours. Compliance archives." },
+        ],
+      },
+      {
+        type: "grid", icon: "🗄️", label: "Database Services",
+        items: [
+          { icon: "🗃️", name: "Azure SQL Database", tag: "PaaS", tagColor: "#0078d4", body: "Fully managed SQL Server. Microsoft handles patching, HA, and backups. Scale compute and storage independently. Built-in intelligence." },
+          { icon: "🌌", name: "Azure Cosmos DB", tag: "NoSQL Global", tagColor: "#8764b8", body: "Multi-model NoSQL (SQL, MongoDB, Cassandra, Gremlin, Table). Globally distributed with sub-10ms reads. Multi-region write capability." },
+          { icon: "🐘", name: "Azure DB for MySQL / PostgreSQL", tag: "Open Source PaaS", tagColor: "#00b294", body: "Fully managed MySQL and PostgreSQL. Automatic patching, HA, and backups. Great for migrating existing open-source databases." },
+          { icon: "🔧", name: "SQL Managed Instance", tag: "Near-100% Compat", tagColor: "#f0ad4e", body: "Near-complete SQL Server feature compatibility — SQL Agent, CLR, linked servers. Perfect lift-and-shift for SQL Server workloads." },
+        ],
+      },
+      {
+        type: "examples", icon: "💡", label: "Real-World Scenarios",
+        items: [
+          "East US ↔ West US are a region pair — Azure uses this pair for geo-redundant storage replication automatically",
+          "Deploy your app VMs across all 3 Availability Zones in a region → 99.99% SLA, survives a full building outage",
+          "Use Azure Functions with a Blob trigger: when image uploaded to Storage → auto-resize it → zero servers needed",
+          "ExpressRoute = private highway to Azure. VPN = driving the public road with a locked car (encrypted but on shared road)",
+          "Cosmos DB with 5 region replicas: customers in Asia, Europe, and Americas all read from their nearest copy in <10ms",
+        ],
+      },
+      {
+        type: "tips", icon: "🎯", label: "Exam Tips",
+        color: "#00b294",
+        items: [
+          "Availability Zones = different BUILDINGS. Availability Sets = same building, different RACKS.",
+          "ExpressRoute is NOT over the internet — that single fact is tested repeatedly.",
+          "Azure Functions = serverless = pay per millisecond of execution (not per hour like a VM).",
+          "Deleting a Resource Group permanently deletes ALL resources inside. Use Resource Locks!",
+          "AKS = Azure manages Kubernetes control plane for FREE. You only pay for worker nodes.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "azure-management",
+    title: "Azure Management & Governance",
+    icon: "🛡️",
+    color: "#8764b8",
+    examWeight: "30–35%",
+    tagline: "Know which tool does what — and which calculator to use when",
+    keyFact: "Pricing Calculator = estimate BEFORE deploying. TCO Calculator = compare on-prem vs Azure cost. Azure Advisor = free recommendations.",
+    sections: [
+      {
+        type: "grid", icon: "🛠️", label: "Management Tools — All 6 Required",
+        items: [
+          { icon: "🌐", name: "Azure Portal", tag: "GUI / Web", tagColor: "#0078d4", body: "Web-based console at portal.azure.com. Point-and-click management for all Azure resources. Best for exploring and one-off tasks." },
+          { icon: "⌨️", name: "Azure CLI", tag: "Cross-platform", tagColor: "#00b294", body: "Command-line interface — all commands start with az. Works on Windows, macOS, Linux. Great for scripting and automation." },
+          { icon: "💻", name: "Azure PowerShell", tag: "PS Module", tagColor: "#8764b8", body: "PowerShell module using Az prefix — Connect-AzAccount, New-AzVM, Get-AzResourceGroup. Best for Windows admins who know PowerShell." },
+          { icon: "🖥️", name: "Azure Cloud Shell", tag: "Browser-based", tagColor: "#f0ad4e", body: "CLI and PowerShell in your browser via the Azure Portal. No install needed — comes with pre-authenticated az and Az modules." },
+          { icon: "📄", name: "ARM Templates", tag: "IaC JSON", tagColor: "#e74c3c", body: "JSON files declaratively defining Azure infrastructure. Idempotent — safe to run multiple times. Version-controlled in git. Repeatable deployments." },
+          { icon: "🔧", name: "Bicep", tag: "IaC DSL", tagColor: "#00b294", body: "Domain-specific language that compiles to ARM JSON. Simpler, cleaner syntax. First-class citizen — same capabilities as ARM templates." },
+        ],
+      },
+      {
+        type: "monitoring", icon: "📊", label: "Monitoring Services — Know the Exact Differences",
+        items: [
+          { icon: "📈", name: "Azure Monitor", badge: "YOUR resources", badgeColor: "#0078d4", body: "Central hub for all monitoring in Azure. Collects metrics (numbers over time) and logs (structured records) from Azure resources, VMs, apps, and on-premises. Foundation for all other monitoring tools." },
+          { icon: "🔍", name: "Log Analytics", badge: "Query tool", badgeColor: "#8764b8", body: "Part of Azure Monitor. Write KQL (Kusto Query Language) queries to search and analyse your collected logs. Workspace stores logs from multiple sources. Used by Sentinel and Defender for Cloud." },
+          { icon: "📱", name: "Application Insights", badge: "Web app APM", badgeColor: "#00b294", body: "Application Performance Monitoring for live web applications. Auto-detects performance anomalies, tracks requests, response times, failure rates, dependencies, and user behaviour with no code changes for some stacks." },
+          { icon: "🏥", name: "Azure Service Health", badge: "Azure platform", badgeColor: "#f0ad4e", body: "Personalised view of Azure service issues affecting YOUR specific resources and regions. Shows: Service Issues (outages), Planned Maintenance, and Health Advisories (deprecations). NOT for monitoring your app — it monitors Azure itself." },
+          { icon: "⭐", name: "Azure Advisor", badge: "Recommendations", badgeColor: "#e74c3c", body: "Free, personalised best-practice consultant. Analyses your Azure configuration and gives specific recommendations across 5 pillars: Reliability, Security, Performance, Cost, and Operational Excellence. Acts on Azure data to suggest improvements." },
+        ],
+      },
+      {
+        type: "governance", icon: "⚖️", label: "Governance Tools — Four Pillars",
+        cards: [
+          {
+            icon: "📜", title: "Azure Policy", color: "#0078d4",
+            items: [
+              { label: "Purpose", value: "Enforce organisational rules and compliance standards across all Azure resources in your subscriptions." },
+              { label: "Deny effect", value: "Blocks a resource from being created or modified if it violates the policy. Most restrictive." },
+              { label: "Audit effect", value: "Allows creation but marks non-compliant resources. Use for awareness before enforcing Deny." },
+              { label: "DeployIfNotExists", value: "Automatically deploys a required resource if it's missing (e.g., enable diagnostics on every VM)." },
+              { label: "Initiatives", value: "Groups of related policies bundled together for a compliance goal (e.g., Enable Azure Security Center)." },
+            ],
+          },
+          {
+            icon: "🔐", title: "Role-Based Access Control (RBAC)", color: "#8764b8",
+            items: [
+              { label: "Owner", value: "Full access to all resources AND can grant access to others. Highest privilege built-in role." },
+              { label: "Contributor", value: "Create and manage all resources but CANNOT grant access to others or assign roles." },
+              { label: "Reader", value: "View all resources but cannot make any changes. Zero modification capability." },
+              { label: "Scope levels", value: "Management Group → Subscription → Resource Group → Resource. Roles inherit downward." },
+              { label: "Principle", value: "Always assign minimum privilege needed. Use specific built-in roles over Owner when possible." },
+            ],
+          },
+          {
+            icon: "🔒", title: "Resource Locks", color: "#e74c3c",
+            items: [
+              { label: "ReadOnly lock", value: "Authorised users can read but CANNOT modify or delete resources. Applied to RG = all resources inside." },
+              { label: "Delete lock", value: "Authorised users can read and modify but CANNOT delete. Most common lock for production." },
+              { label: "Override behaviour", value: "Locks override RBAC — even an Owner cannot delete a resource with a Delete lock applied." },
+              { label: "Inheritance", value: "Lock on a Resource Group applies to all resources inside it. Lock on a subscription applies to all RGs." },
+              { label: "Best practice", value: "Always apply a Delete lock to production resource groups to prevent accidental wipeouts." },
+            ],
+          },
+          {
+            icon: "🏷️", title: "Resource Tags", color: "#00b294",
+            items: [
+              { label: "Format", value: "Key-value pairs: Environment : Production, CostCenter : Marketing, Owner : JohnDoe." },
+              { label: "Inheritance", value: "Tags are NOT automatically inherited by child resources — apply explicitly or enforce via Policy." },
+              { label: "Limits", value: "Maximum 50 tags per resource or resource group. Tag names are case-insensitive." },
+              { label: "Use cases", value: "Cost allocation by department, automation triggers, environment identification, compliance reporting." },
+              { label: "Enforcement", value: "Use Azure Policy with 'Deny' to require specific tags on all resources (e.g., require CostCenter tag)." },
+            ],
+          },
+        ],
+      },
+      {
+        type: "cost", icon: "💰", label: "Cost Management & Savings Methods",
+        tools: [
+          { icon: "🧮", name: "Pricing Calculator", color: "#0078d4", body: "Estimate cost BEFORE deploying. Build a hypothetical scenario with specific regions, VM sizes, storage, and services. No Azure account needed." },
+          { icon: "📊", name: "TCO Calculator", color: "#8764b8", body: "Compare total 3-year cost of on-premises vs Azure. Enter your current server, storage, and networking costs. Shows detailed savings breakdown." },
+          { icon: "💳", name: "Azure Cost Management", color: "#00b294", body: "Monitor actual spending after deployment. View by service, resource, tag, or time. Set budgets with email alerts. Analyse spending trends." },
+          { icon: "⭐", name: "Azure Advisor (Cost)", color: "#f0ad4e", body: "Automatically identifies underutilised VMs, unused resources, and Reserved Instance opportunities. Gives specific actionable recommendations." },
+        ],
+        savings: [
+          { method: "Reserved Instances", discount: "Up to 72%", color: "#00b294", detail: "Commit to 1 or 3 years on specific VM family/region. Significant upfront or monthly commitment." },
+          { method: "Azure Spot VMs", discount: "Up to 90%", color: "#f0ad4e", detail: "Use Azure's unused capacity. Can be evicted with 30 seconds notice. Use for fault-tolerant workloads." },
+          { method: "Azure Hybrid Benefit", discount: "Up to 40%", color: "#0078d4", detail: "Bring existing Windows Server or SQL Server licences with Software Assurance to Azure." },
+          { method: "Right-Sizing", discount: "Variable", color: "#8764b8", detail: "Use Azure Advisor to identify VMs running at <5% CPU and downgrade to smaller SKUs." },
+        ],
+      },
+      {
+        type: "examples", icon: "💡", label: "Real-World Scenarios",
+        items: [
+          "Azure Policy: Deny creating any VM outside East US or West US — prevents shadow IT in other regions",
+          "RBAC: Give a developer 'Contributor' on one Resource Group only, not the whole subscription",
+          "Delete lock on production RG: even if a script runs az group delete by mistake, Azure rejects it",
+          "Reserved Instance: commit 3 years on D4s_v3 VM in East US — cut monthly compute bill by 72%",
+          "Tags + Cost Management: tag all resources with CostCenter:Marketing, pull monthly report showing just that team's spend",
+        ],
+      },
+      {
+        type: "tips", icon: "🎯", label: "Exam Tips",
+        color: "#8764b8",
+        items: [
+          "Pricing Calculator = BEFORE you deploy. TCO Calculator = compare on-prem vs Azure. These are different tools.",
+          "Azure Advisor covers 5 pillars: Reliability, Security, Performance, Cost, Operational Excellence.",
+          "Resource Locks OVERRIDE RBAC — even a subscription Owner cannot delete a locked resource.",
+          "Tags are NOT inherited — a tag on a Resource Group does NOT automatically apply to resources inside it.",
+          "Azure Policy Deny = blocks creation. Audit = allows but logs non-compliance. Know both effects.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "identity-security",
+    title: "Identity, Access & Security",
+    icon: "🔐",
+    color: "#e74c3c",
+    examWeight: "25–30%",
+    tagline: "Zero Trust — never trust, always verify, assume breach at all times",
+    keyFact: "B2B = external BUSINESS partners access YOUR apps. B2C = YOUR customers authenticate through YOUR apps. Different scenarios entirely.",
+    sections: [
+      {
+        type: "cards", icon: "🪪", label: "Azure AD / Microsoft Entra ID — Core Identity",
+        items: [
+          { icon: "👤", title: "Azure AD (Microsoft Entra ID)", body: "Microsoft's cloud-based Identity and Access Management. Authentication for Azure portal, Microsoft 365, and thousands of SaaS apps. NOT the same as on-premises Active Directory Domain Services." },
+          { icon: "🏢", title: "Azure AD B2B (Business-to-Business)", body: "Invite external PARTNERS or VENDORS into your tenant. They use their own organisation's credentials. You manage what apps they can access. Great for collaboration without creating internal accounts." },
+          { icon: "🛒", title: "Azure AD B2C (Business-to-Consumer)", body: "Identity management for YOUR customer-facing apps. Let customers sign in with Google, Facebook, Apple, or a local email account. Your app handles millions of consumer identities at scale." },
+          { icon: "🔄", title: "Azure AD Connect (Hybrid Identity)", body: "Synchronise your on-premises Active Directory with Azure AD. Users get one set of credentials for both on-prem and cloud resources. Seamless hybrid identity experience for employees." },
+          { icon: "🎫", title: "Single Sign-On (SSO)", body: "Authenticate once with Azure AD and access all connected applications — Azure, Microsoft 365, Salesforce, ServiceNow, and thousands more. Users love it; admins can manage all apps from one place." },
+          { icon: "⏱️", title: "Privileged Identity Management (PIM)", body: "Just-in-time role activation — users request elevated access only when needed, for a specific duration, with manager approval. Full audit log of all privilege usage. Eliminates standing admin access." },
+        ],
+      },
+      {
+        type: "auth", icon: "🔑", label: "Authentication Methods — Strength Comparison",
+        items: [
+          { icon: "🔑", name: "FIDO2 Security Keys", strength: 100, color: "#00b294", body: "Physical hardware keys (USB/NFC) — strongest available auth. Phishing-resistant by design. No password, no SMS code." },
+          { icon: "🪟", name: "Windows Hello for Business", strength: 97, color: "#0078d4", body: "Biometric (face/fingerprint) or PIN tied to a specific device. No password transmitted. Cannot be phished remotely." },
+          { icon: "📱", name: "Microsoft Authenticator App", strength: 93, color: "#8764b8", body: "Push notification MFA or passwordless sign-in. User approves on their phone. Much stronger than SMS codes." },
+          { icon: "🔢", name: "Multi-Factor Authentication (MFA)", strength: 88, color: "#f0ad4e", body: "2+ verification factors: something you KNOW (password) + HAVE (phone) + ARE (biometric). Blocks 99.9% of account compromises." },
+          { icon: "⚡", name: "Conditional Access + MFA", strength: 85, color: "#e74c3c", body: "Risk-based: evaluate user, location, device, and app. Only require MFA when risk signals fire. Zero friction for normal users." },
+        ],
+      },
+      {
+        type: "defense", icon: "🏰", label: "Defense in Depth — 7 Layers (Outside → Inside)",
+        note: "Each layer provides protection and slows attackers. If one layer is breached, others still protect the data.",
+        layers: [
+          { num: 1, icon: "🏢", name: "Physical Security", color: "#6b7a99", body: "Azure datacenter physical access: biometric entry, CCTV, security guards, man-traps. Microsoft handles all of this for you." },
+          { num: 2, icon: "👤", name: "Identity & Access", color: "#8764b8", body: "Azure AD, MFA, Conditional Access, RBAC, PIM. Verify who is requesting access and ensure least-privilege at all times." },
+          { num: 3, icon: "🌊", name: "Perimeter", color: "#e74c3c", body: "DDoS Protection Basic (free) and Standard (paid). Azure Firewall. Stop volumetric attacks and malicious traffic before it enters your network." },
+          { num: 4, icon: "🌐", name: "Network", color: "#0078d4", body: "NSGs to filter traffic by IP/port/protocol. VNets to isolate workloads. Private Endpoints to keep traffic off the internet entirely. Subnet segmentation." },
+          { num: 5, icon: "🖥️", name: "Compute", color: "#00b294", body: "Keep VMs patched and updated (Automatic Guest Patching). Endpoint protection software. Disable unnecessary ports and services. Just-In-Time VM access." },
+          { num: 6, icon: "📱", name: "Application", color: "#f0ad4e", body: "Secure coding practices. No hardcoded secrets — use Key Vault. No SQL injection or XSS vulnerabilities. WAF on Application Gateway." },
+          { num: 7, icon: "🗄️", name: "Data", color: "#00e5a0", body: "Encryption at rest (Azure Storage Service Encryption, Transparent Data Encryption for SQL). Encryption in transit (TLS 1.2+). Classify and label sensitive data with Purview." },
+        ],
+      },
+      {
+        type: "security-services", icon: "🛡️", label: "Key Security Services — Definitions Required",
+        items: [
+          { icon: "🏥", name: "Microsoft Defender for Cloud", tag: "CSPM + CWPP", tagColor: "#e74c3c", body: "Security Posture Management: calculates Secure Score, identifies misconfigurations. Workload Protection: threat detection for VMs, SQL, containers, Key Vault, and more. Has a free tier plus paid enhanced protections." },
+          { icon: "🔭", name: "Microsoft Sentinel", tag: "SIEM + SOAR", tagColor: "#8764b8", body: "Cloud-native SIEM: collect security signals from across your environment. SOAR: automate responses with Logic App playbooks. Detect threats using ML and built-in analytics rules. Investigate with visual attack timelines." },
+          { icon: "🗝️", name: "Azure Key Vault", tag: "Secrets Management", tagColor: "#f0ad4e", body: "Store secrets (passwords, API keys, connection strings), encryption keys (for Azure Disk Encryption), and SSL/TLS certificates. Apps reference secrets by name — never see the actual value. Hardware Security Module (HSM) backed." },
+          { icon: "🛡️", name: "Azure DDoS Protection Basic", tag: "FREE — Always On", tagColor: "#00b294", body: "Automatic protection against common Layer 3 and 4 volumetric DDoS attacks. Enabled for ALL Azure VNets at no cost. Microsoft absorbs the attack traffic using Azure's global scale network." },
+          { icon: "⚡", name: "Azure DDoS Protection Standard", tag: "PAID — Advanced", tagColor: "#0078d4", body: "Adaptive tuning learns your normal traffic patterns. Mitigation telemetry and attack analytics. Rapid Response team access. Cost protection guarantee — you get Azure credits if scaled up due to attack." },
+          { icon: "🔥", name: "Azure Firewall", tag: "Stateful Managed", tagColor: "#e74c3c", body: "Fully managed, cloud-native, stateful network firewall. Built-in high availability and unlimited scalability. Threat intelligence feed blocks known bad IPs and FQDNs. FQDN filtering for outbound traffic control." },
+          { icon: "🔒", name: "Network Security Group (NSG)", tag: "Layer 4 Rules", tagColor: "#6b7a99", body: "Contains inbound and outbound security rules based on 5-tuple: source IP, source port, destination IP, destination port, protocol. Applied to subnets or individual NICs. Free service — no extra cost." },
+          { icon: "🖥️", name: "Azure Bastion", tag: "Secure RDP/SSH", tagColor: "#0078d4", body: "Browser-based RDP and SSH to Azure VMs through the Azure Portal. VMs need NO public IP address. No open ports required on VMs. Traffic flows over SSL (port 443) only. Eliminates RDP brute-force attack surface." },
+        ],
+      },
+      {
+        type: "zero-trust", icon: "⚡", label: "Zero Trust Security Model — Three Principles",
+        principles: [
+          { icon: "✅", title: "Verify Explicitly", color: "#0078d4", body: "Always authenticate and authorise using ALL available signals — user identity, location, device health, service, data classification, and anomaly detection. Never assume trust based on network location alone." },
+          { icon: "🔽", title: "Use Least Privilege Access", color: "#8764b8", body: "Limit user access with just-in-time (JIT) and just-enough-access (JEA). Use Azure AD PIM for privileged roles. Apply risk-based adaptive access policies. Users should only access what they need for the task at hand." },
+          { icon: "💥", title: "Assume Breach", color: "#e74c3c", body: "Design as if attackers are already inside your network. Minimise blast radius with network segmentation. Verify end-to-end encryption. Use analytics (Sentinel) for visibility. Have an incident response plan ready to execute." },
+        ],
+      },
+      {
+        type: "examples", icon: "💡", label: "Real-World Scenarios",
+        items: [
+          "Conditional Access: require MFA when a user signs in from a country your organisation has never used before",
+          "Key Vault: developers reference 'connectionString' in code — they never see the actual database password value",
+          "Azure Bastion: SSH into a production VM through the browser — the VM has no public IP or open port 22",
+          "DDoS Standard: during a 500 Gbps volumetric attack on your app, Azure automatically absorbs and mitigates it",
+          "Microsoft Sentinel: detects anomalous sign-in at 3am from unusual location, triggers auto-playbook to disable account",
+        ],
+      },
+      {
+        type: "tips", icon: "🎯", label: "Exam Tips",
+        color: "#e74c3c",
+        items: [
+          "B2B = external BUSINESS partners access your tenant. B2C = your app's CONSUMERS (customers) sign in.",
+          "Defender for Cloud = PREVENT and POSTURE (Secure Score). Sentinel = DETECT and RESPOND (SIEM/SOAR).",
+          "Key Vault: NEVER store secrets in application code or config files — always reference Key Vault.",
+          "DDoS Basic = FREE and always on. DDoS Standard = PAID and adds adaptive tuning, analytics, and rapid response.",
+          "Azure Bastion = most secure VM access. No public IP + no open ports + browser-based = eliminates attack surface.",
+        ],
+      },
+    ],
+  },
+];
+
+// ─── SECTION RENDERERS ────────────────────────────────────────────────────────
+const C = {
+  bg: "#060f1a",
+  card: "#0b1e35",
+  border: "#1a3050",
+  text: "#e2eaf4",
+  muted: "#8fa8c0",
+  faint: "#6080a0",
+};
+
+function Pill({ label, color, small }) {
+  return (
+    <span style={{ fontSize: small ? 9 : 10, fontWeight: 700, padding: small ? "2px 6px" : "3px 9px", borderRadius: 20, background: color + "22", color, border: `1px solid ${color}44`, whiteSpace: "nowrap" }}>
+      {label}
+    </span>
+  );
+}
+
+function SecHead({ icon, label, color }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+      <div style={{ width: 34, height: 34, borderRadius: 10, background: color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, flexShrink: 0 }}>{icon}</div>
+      <span style={{ fontSize: 15, fontWeight: 800, color: C.text, letterSpacing: "-0.3px", flex: 1 }}>{label}</span>
+      <div style={{ height: 1, width: 40, background: color + "40" }} />
+    </div>
+  );
+}
+
+function renderSec(sec, color) {
+  if (sec.type === "cards") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${color}22`, borderLeft: `4px solid ${color}`, borderRadius: "0 12px 12px 0", padding: "13px 15px", display: "flex", gap: 12, alignItems: "flex-start" }}>
+            <span style={{ fontSize: 22, minWidth: 28, marginTop: 1 }}>{item.icon}</span>
+            <div>
+              <div style={{ fontWeight: 800, color: C.text, fontSize: 13, marginBottom: 4 }}>{item.title}</div>
+              <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{item.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "versus") {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {[sec.left, sec.right].map((side, si) => (
+          <div key={si} style={{ background: C.card, border: `1px solid ${side.color}33`, borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ background: side.color + "18", borderBottom: `1px solid ${side.color}33`, padding: "11px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 18 }}>{side.icon}</span>
+              <span style={{ fontWeight: 800, color: side.color, fontSize: 12, lineHeight: 1.3 }}>{side.title}</span>
+            </div>
+            <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 7 }}>
+              {side.points.map((p, pi) => (
+                <div key={pi} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                  <span style={{ color: side.color, fontSize: 8, marginTop: 5, flexShrink: 0 }}>◆</span>
+                  <span style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{p}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "model-table") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {sec.rows.map((row, ri) => (
+          <div key={ri} style={{ background: C.card, border: `1px solid ${row.color}33`, borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ background: row.color + "18", borderBottom: `1px solid ${row.color}33`, padding: "11px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <span style={{ fontWeight: 900, color: row.color, fontSize: 18 }}>{row.model}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 10, color: C.faint }}>Your control</span>
+                <div style={{ background: "#0a1929", borderRadius: 4, width: 60, height: 7, overflow: "hidden" }}>
+                  <div style={{ background: row.color, width: `${row.control}%`, height: "100%", borderRadius: 4 }} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 800, color: row.color, minWidth: 30 }}>{row.control}%</span>
+              </div>
+            </div>
+            <div style={{ padding: "12px 16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase", marginBottom: 4, letterSpacing: "0.5px" }}>You Manage</div>
+                  <div style={{ fontSize: 12, color: C.text, fontWeight: 600, lineHeight: 1.4 }}>{row.youManage}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase", marginBottom: 4, letterSpacing: "0.5px" }}>Azure Manages</div>
+                  <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{row.azureManages}</div>
+                </div>
+              </div>
+              <div style={{ paddingTop: 8, borderTop: `1px solid ${row.color}22`, display: "flex", gap: 6, alignItems: "flex-start" }}>
+                <span style={{ fontSize: 10, color: C.faint, marginTop: 1 }}>📌</span>
+                <div>
+                  <span style={{ fontSize: 11, color: row.color, fontWeight: 700 }}>Examples: </span>
+                  <span style={{ fontSize: 11, color: C.muted }}>{row.examples}</span>
+                </div>
+              </div>
+              <div style={{ marginTop: 6, background: row.color + "10", borderRadius: 8, padding: "7px 10px", fontSize: 11, color: row.color, fontWeight: 600 }}>💡 {row.tip}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "matrix") {
+    const cols = ["IaaS", "PaaS", "SaaS"];
+    const colColors = ["#0078d4", "#00b294", "#8764b8"];
+    return (
+      <div>
+        {sec.note && <div style={{ background: "#e74c3c18", border: "1px solid #e74c3c33", borderRadius: 10, padding: "9px 13px", marginBottom: 10, fontSize: 12, color: "#ff8080" }}>⚠️ {sec.note}</div>}
+        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, overflow: "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", background: "#0a1929", borderBottom: `1px solid ${C.border}` }}>
+            <div style={{ padding: "10px 14px", fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase" }}>Responsibility</div>
+            {cols.map((c2, i) => <div key={i} style={{ padding: "10px 0", fontSize: 12, fontWeight: 800, color: colColors[i], textAlign: "center" }}>{c2}</div>)}
+          </div>
+          {sec.rows.map((row, ri) => (
+            <div key={ri} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", borderBottom: ri < sec.rows.length - 1 ? `1px solid ${C.border}30` : "none", background: ri % 2 === 0 ? "transparent" : "#050e1a" }}>
+              <div style={{ padding: "9px 14px", fontSize: 12, color: C.text }}>{row.item}</div>
+              {[row.iaas, row.paas, row.saas].map((val, vi) => {
+                const isYou = val.startsWith("You");
+                const isShared = val === "Shared";
+                const bg = isYou ? "#e74c3c18" : isShared ? "#f0ad4e18" : colColors[vi] + "18";
+                const textColor = isYou ? "#ff7070" : isShared ? "#f0ad4e" : colColors[vi];
+                return (
+                  <div key={vi} style={{ padding: "9px 0", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 20, background: bg, color: textColor, border: `1px solid ${textColor}44` }}>{val}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (sec.type === "hierarchy") {
+    return (
+      <div>
+        {sec.note && <div style={{ background: color + "12", border: `1px solid ${color}33`, borderRadius: 10, padding: "9px 13px", marginBottom: 10, fontSize: 12, color: color }}>ℹ️ {sec.note}</div>}
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {sec.levels.map((lv, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "stretch", gap: 0, marginLeft: i * 16 }}>
+              {i > 0 && <div style={{ width: 12, borderBottom: `2px dashed ${lv.color}44`, alignSelf: "center", flexShrink: 0 }} />}
+              <div style={{ flex: 1, background: C.card, border: `1px solid ${lv.color}44`, borderLeft: `4px solid ${lv.color}`, borderRadius: "0 12px 12px 0", padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <span style={{ fontSize: 20, minWidth: 26 }}>{lv.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontWeight: 800, color: lv.color, fontSize: 13 }}>{lv.name}</span>
+                    <Pill label={lv.badge} color={lv.color} small />
+                  </div>
+                  <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{lv.desc}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (sec.type === "infra") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${item.color}33`, borderRadius: 13, padding: "14px 15px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: item.color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{item.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 800, color: C.text, fontSize: 14 }}>{item.title}</div>
+              </div>
+              <Pill label={item.badge} color={item.color} />
+            </div>
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, paddingLeft: 46 }}>{item.body}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "sla-table") {
+    return (
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", background: "#0a1929", borderBottom: `1px solid ${C.border}`, padding: "10px 16px" }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase" }}>Configuration</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase", textAlign: "center" }}>SLA</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: "uppercase", textAlign: "right" }}>Max Downtime/yr</span>
+        </div>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", padding: "11px 16px", borderBottom: i < sec.items.length - 1 ? `1px solid ${C.border}30` : "none", background: i % 2 === 0 ? "transparent" : "#050e1a", alignItems: "center" }}>
+            <span style={{ fontSize: 13, color: C.text }}>{item.config}</span>
+            <span style={{ fontWeight: 900, color: item.color, fontSize: 16, textAlign: "center" }}>{item.sla}</span>
+            <span style={{ fontSize: 12, color: C.faint, textAlign: "right" }}>{item.downtime}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "grid") {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${item.tagColor}22`, borderRadius: 12, padding: "13px 13px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
+              <span style={{ fontSize: 20 }}>{item.icon}</span>
+              <span style={{ fontWeight: 700, color: C.text, fontSize: 12, flex: 1, lineHeight: 1.3 }}>{item.name}</span>
+              <Pill label={item.tag} color={item.tagColor} small />
+            </div>
+            <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.55 }}>{item.body}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "storage") {
+    return (
+      <div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+          {sec.services.map((s, i) => (
+            <div key={i} style={{ background: C.card, border: `1px solid ${s.color}33`, borderRadius: 12, padding: "12px 13px" }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 20 }}>{s.icon}</span>
+                <span style={{ fontWeight: 700, color: s.color, fontSize: 12 }}>{s.name}</span>
+              </div>
+              <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.5 }}>{s.body}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ background: "#0a1929", borderBottom: `1px solid ${C.border}`, padding: "9px 14px", fontSize: 11, fontWeight: 700, color: C.faint, textTransform: "uppercase", letterSpacing: "0.5px" }}>Blob Storage Access Tiers</div>
+          <div style={{ display: "flex", padding: 10, gap: 8 }}>
+            {sec.tiers.map((t, i) => (
+              <div key={i} style={{ flex: 1, background: t.color + "10", border: `1px solid ${t.color}33`, borderRadius: 10, padding: "12px 10px", textAlign: "center" }}>
+                <div style={{ fontWeight: 800, color: t.color, fontSize: 13, marginBottom: 6 }}>{t.name}</div>
+                <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.5 }}>{t.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (sec.type === "monitoring") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${item.badgeColor}22`, borderRadius: 13, padding: "13px 15px" }}>
+            <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 6 }}>
+              <span style={{ fontSize: 22, minWidth: 28 }}>{item.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 5 }}>
+                  <span style={{ fontWeight: 800, color: C.text, fontSize: 14 }}>{item.name}</span>
+                  <Pill label={`Monitors: ${item.badge}`} color={item.badgeColor} />
+                </div>
+                <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{item.body}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "governance") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {sec.cards.map((card, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${card.color}33`, borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ background: card.color + "18", borderBottom: `1px solid ${card.color}33`, padding: "12px 16px", display: "flex", alignItems: "center", gap: 9 }}>
+              <span style={{ fontSize: 20 }}>{card.icon}</span>
+              <span style={{ fontWeight: 800, color: card.color, fontSize: 15 }}>{card.title}</span>
+            </div>
+            <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 7 }}>
+              {card.items.map((row, ri) => (
+                <div key={ri} style={{ display: "flex", gap: 10, alignItems: "flex-start", paddingBottom: ri < card.items.length - 1 ? 7 : 0, borderBottom: ri < card.items.length - 1 ? `1px solid ${card.color}15` : "none" }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: card.color, minWidth: 68, marginTop: 2, textTransform: "uppercase", letterSpacing: "0.3px", lineHeight: 1.4 }}>{row.label}</span>
+                  <span style={{ fontSize: 12, color: C.muted, lineHeight: 1.55 }}>{row.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "cost") {
+    return (
+      <div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+          {sec.tools.map((t, i) => (
+            <div key={i} style={{ background: C.card, border: `1px solid ${t.color}33`, borderRadius: 12, padding: "12px 13px" }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 20 }}>{t.icon}</span>
+                <span style={{ fontWeight: 700, color: t.color, fontSize: 12 }}>{t.name}</span>
+              </div>
+              <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.5 }}>{t.body}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ background: "#0a1929", borderBottom: `1px solid ${C.border}`, padding: "9px 16px", fontSize: 11, fontWeight: 700, color: C.faint, textTransform: "uppercase", letterSpacing: "0.5px" }}>💸 Cost Savings Methods</div>
+          {sec.savings.map((s, i) => (
+            <div key={i} style={{ padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: i < sec.savings.length - 1 ? `1px solid ${C.border}25` : "none", background: i % 2 === 0 ? "transparent" : "#050e1a" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: C.text, fontSize: 13, marginBottom: 2 }}>{s.method}</div>
+                <div style={{ fontSize: 11, color: C.faint }}>{s.detail}</div>
+              </div>
+              <span style={{ fontSize: 18, fontWeight: 900, color: s.color, minWidth: 70, textAlign: "right" }}>{s.discount}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (sec.type === "auth") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${item.color}33`, borderRadius: 12, padding: "13px 15px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              <span style={{ fontSize: 22 }}>{item.icon}</span>
+              <span style={{ fontWeight: 800, color: C.text, fontSize: 13, flex: 1 }}>{item.name}</span>
+              <span style={{ fontWeight: 900, color: item.color, fontSize: 16 }}>{item.strength}%</span>
+            </div>
+            <div style={{ background: "#050e1a", borderRadius: 5, height: 6, marginBottom: 8, overflow: "hidden" }}>
+              <div style={{ background: `linear-gradient(90deg, ${item.color}77, ${item.color})`, height: "100%", width: `${item.strength}%`, borderRadius: 5 }} />
+            </div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{item.body}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "defense") {
+    return (
+      <div>
+        {sec.note && <div style={{ background: "#0078d418", border: "1px solid #0078d433", borderRadius: 10, padding: "9px 13px", marginBottom: 10, fontSize: 12, color: "#60a8d4" }}>ℹ️ {sec.note}</div>}
+        <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+          {sec.layers.map((lv, i) => (
+            <div key={i} style={{ background: C.card, border: `1px solid ${lv.color}33`, borderRadius: 11, padding: "11px 14px", display: "flex", gap: 12, alignItems: "flex-start", marginLeft: i * 10, marginRight: (sec.layers.length - 1 - i) * 3 }}>
+              <div style={{ width: 34, height: 34, borderRadius: "50%", background: lv.color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{lv.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 800, color: lv.color, fontSize: 12, marginBottom: 3 }}>Layer {lv.num}: {lv.name}</div>
+                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5 }}>{lv.body}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (sec.type === "security-services") {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        {sec.items.map((item, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${item.tagColor}22`, borderRadius: 12, padding: "12px 13px" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
+              <span style={{ fontSize: 18, minWidth: 22 }}>{item.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: C.text, fontSize: 12, marginBottom: 4, lineHeight: 1.3 }}>{item.name}</div>
+                <Pill label={item.tag} color={item.tagColor} small />
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.5 }}>{item.body}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "zero-trust") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {sec.principles.map((p, i) => (
+          <div key={i} style={{ background: `linear-gradient(135deg, ${C.card}, #0a1929)`, border: `1px solid ${p.color}44`, borderRadius: 14, padding: "16px 18px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <div style={{ width: 42, height: 42, borderRadius: 12, background: p.color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{p.icon}</div>
+            <div>
+              <div style={{ fontWeight: 800, color: p.color, fontSize: 15, marginBottom: 6 }}>{p.title}</div>
+              <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.65 }}>{p.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "examples") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        {sec.items.map((ex, i) => (
+          <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "11px 14px", display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <span style={{ color, fontWeight: 900, fontSize: 13, minWidth: 20 }}>{i + 1}.</span>
+            <span style={{ fontSize: 13, color: C.muted, lineHeight: 1.6 }}>{ex}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (sec.type === "tips") {
+    const tc = sec.color || color;
+    return (
+      <div style={{ background: tc + "0c", border: `1px solid ${tc}33`, borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ background: tc + "1a", borderBottom: `1px solid ${tc}33`, padding: "12px 16px", display: "flex", alignItems: "center", gap: 9 }}>
+          <span style={{ fontSize: 18 }}>🎯</span>
+          <span style={{ fontWeight: 800, color: tc, fontSize: 14 }}>Must-Know Exam Facts</span>
+        </div>
+        <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 9 }}>
+          {sec.items.map((tip, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <div style={{ width: 24, height: 24, borderRadius: "50%", background: tc + "25", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: tc, flexShrink: 0 }}>{i + 1}</div>
+              <span style={{ fontSize: 13, color: "#b8ccdc", lineHeight: 1.6 }}>{tip}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+
+function ProgressRing({ pct, size = 54, stroke = 5, color = "#0078d4" }) {
+  const r = (size - stroke * 2) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
+  return (
+    <svg width={size} height={size}>
+      <circle cx={size / 2} cy={size / 2} r={r} stroke="#1e2a3a" strokeWidth={stroke} fill="none" />
+      <circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none"
+        strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+        style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%", transition: "stroke-dashoffset .5s" }} />
+      <text x="50%" y="50%" textAnchor="middle" dy=".35em" fill="#e2eaf4" fontSize={size * 0.2} fontWeight="700">{pct}%</text>
+    </svg>
+  );
+}
+
+function Dashboard({ quizScore, flashcardsSeen, onNav }) {
+  const quizPct = quizScore.total > 0 ? Math.round((quizScore.correct / quizScore.total) * 100) : 0;
+  const stats = [
+    { label: "Topics", value: `${STUDY_TOPICS.length}`, sub: "Exam domains", color: "#0078d4", pct: 100 },
+    { label: "Flashcards", value: `${FLASHCARDS.length}`, sub: `${flashcardsSeen} reviewed`, color: "#00b294", pct: Math.round((flashcardsSeen / FLASHCARDS.length) * 100) },
+    { label: "Quizzes", value: `${QUIZZES.length}`, sub: `${quizScore.total} attempted`, color: "#8764b8", pct: Math.round((quizScore.total / QUIZZES.length) * 100) },
+    { label: "Score", value: `${quizPct}%`, sub: `${quizScore.correct}/${quizScore.total} correct`, color: quizPct >= 70 ? "#00b294" : quizPct > 0 ? "#f0ad4e" : "#6b7a99", pct: quizPct },
+  ];
+
+  return (
+    <div>
+      <div style={{ background: "linear-gradient(135deg, #003d73 0%, #005a9e 50%, #0078d4 100%)", borderRadius: 18, padding: "28px 24px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, background: "rgba(255,255,255,0.04)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: -50, left: 40, width: 130, height: 130, background: "rgba(255,255,255,0.03)", borderRadius: "50%" }} />
+        <div style={{ position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+            <span style={{ fontSize: 36 }}>☁️</span>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>AZ-900 Exam Prep</h1>
+              <p style={{ margin: 0, color: "rgba(255,255,255,0.65)", fontSize: 13 }}>Microsoft Azure Fundamentals</p>
+            </div>
+          </div>
+          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 14, lineHeight: 1.65, margin: 0 }}>
+            {FLASHCARDS.length} flashcards · {QUIZZES.length} quiz questions · 4 topic guides with visual notes, comparisons, and exam tips.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+        {stats.map(s => (
+          <div key={s.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 13, padding: "14px", display: "flex", alignItems: "center", gap: 12 }}>
+            <ProgressRing pct={s.pct} color={s.color} />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: C.text }}>{s.value}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.muted }}>{s.label}</div>
+              <div style={{ fontSize: 11, color: C.faint }}>{s.sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 20 }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: C.text, marginBottom: 12 }}>📊 Exam Domain Weights</div>
+        {[
+          { t: "Azure Architecture & Services", p: 38, c: "#00b294" },
+          { t: "Management & Governance", p: 32, c: "#8764b8" },
+          { t: "Identity, Access & Security", p: 27, c: "#e74c3c" },
+          { t: "Cloud Concepts", p: 17, c: "#0078d4" },
+        ].map((d, i) => (
+          <div key={i} style={{ marginBottom: i < 3 ? 10 : 0 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <span style={{ fontSize: 12, color: C.muted }}>{d.t}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: d.c }}>{d.p}%</span>
+            </div>
+            <div style={{ background: "#050e1a", borderRadius: 4, height: 6, overflow: "hidden" }}>
+              <div style={{ background: `linear-gradient(90deg, ${d.c}88, ${d.c})`, height: "100%", width: `${d.p}%`, borderRadius: 4 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {[
+          { label: "📚 Study Guide", sub: "Visual notes & concepts", view: "Study", color: "#0078d4" },
+          { label: "🃏 Flashcards", sub: "50 cards — test recall", view: "Flashcards", color: "#00b294" },
+          { label: "📝 Quiz Mode", sub: "200 practice questions", view: "Quiz", color: "#8764b8" },
+          { label: "🏆 All Topics", sub: "4 domains covered", view: "Study", color: "#e74c3c" },
+        ].map(btn => (
+          <button key={btn.label} onClick={() => onNav(btn.view)}
+            style={{ background: C.card, border: `1.5px solid ${btn.color}33`, borderRadius: 13, padding: "15px 12px", cursor: "pointer", textAlign: "left", transition: "all .2s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = btn.color + "14"; e.currentTarget.style.borderColor = btn.color + "77"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = C.card; e.currentTarget.style.borderColor = btn.color + "33"; }}>
+            <div style={{ fontSize: 16, marginBottom: 4, color: C.text }}>{btn.label}</div>
+            <div style={{ fontSize: 11, color: C.faint }}>{btn.sub}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StudyView() {
+  const [sel, setSel] = useState(null);
+
+  if (sel !== null) {
+    const topic = STUDY_TOPICS[sel];
+    return (
+      <div>
+        <button onClick={() => setSel(null)}
+          style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 9, color: C.muted, padding: "8px 16px", cursor: "pointer", marginBottom: 18, fontSize: 13 }}>
+          ← All Topics
+        </button>
+
+        {/* Hero */}
+        <div style={{ background: `linear-gradient(135deg, ${topic.color}20, ${topic.color}08)`, border: `1px solid ${topic.color}44`, borderRadius: 18, padding: "22px 20px", marginBottom: 24, position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -30, right: -30, width: 110, height: 110, background: topic.color + "0a", borderRadius: "50%" }} />
+          <div style={{ display: "flex", gap: 14, alignItems: "flex-start", position: "relative" }}>
+            <div style={{ width: 56, height: 56, borderRadius: 14, background: topic.color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>{topic.icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: C.text }}>{topic.title}</h2>
+                <Pill label={topic.examWeight} color={topic.color} />
+              </div>
+              <p style={{ margin: "0 0 12px", fontSize: 13, color: C.muted }}>{topic.tagline}</p>
+              <div style={{ background: topic.color + "18", border: `1px solid ${topic.color}33`, borderRadius: 10, padding: "9px 13px", display: "flex", gap: 8 }}>
+                <span style={{ color: topic.color, fontSize: 14, flexShrink: 0 }}>⚡</span>
+                <span style={{ fontSize: 12, color: "#c8dce8", lineHeight: 1.5 }}><strong style={{ color: topic.color }}>Key Fact: </strong>{topic.keyFact}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sections */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+          {topic.sections.map((sec, i) => (
+            <div key={i}>
+              <SecHead icon={sec.icon} label={sec.label} color={topic.color} />
+              {renderSec(sec, topic.color)}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer nav */}
+        <div style={{ display: "flex", gap: 10, marginTop: 32 }}>
+          {sel > 0 && (
+            <button onClick={() => setSel(sel - 1)}
+              style={{ flex: 1, background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, color: C.muted, padding: "13px", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>
+              ← {STUDY_TOPICS[sel - 1].icon} {STUDY_TOPICS[sel - 1].title.split(" ").slice(0, 2).join(" ")}
+            </button>
+          )}
+          {sel < STUDY_TOPICS.length - 1 && (
+            <button onClick={() => setSel(sel + 1)}
+              style={{ flex: 1, background: STUDY_TOPICS[sel + 1].color + "18", border: `1px solid ${STUDY_TOPICS[sel + 1].color}44`, borderRadius: 12, color: STUDY_TOPICS[sel + 1].color, padding: "13px", cursor: "pointer", fontSize: 14, fontWeight: 700 }}>
+              {STUDY_TOPICS[sel + 1].icon} {STUDY_TOPICS[sel + 1].title.split(" ").slice(0, 2).join(" ")} →
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h2 style={{ color: C.text, fontSize: 20, fontWeight: 900, margin: "0 0 4px" }}>📚 Study Guide</h2>
+      <p style={{ color: C.faint, fontSize: 13, margin: "0 0 20px" }}>Visual notes, key concepts, real-world scenarios & exam tips — all in one place</p>
+
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 20 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.faint, marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.5px" }}>Exam Weighting</div>
+        {[
+          { t: "Azure Architecture & Services", p: 38, c: "#00b294" },
+          { t: "Management & Governance", p: 32, c: "#8764b8" },
+          { t: "Identity, Access & Security", p: 27, c: "#e74c3c" },
+          { t: "Cloud Concepts", p: 17, c: "#0078d4" },
+        ].map((d, i) => (
+          <div key={i} style={{ marginBottom: i < 3 ? 10 : 0 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <span style={{ fontSize: 12, color: C.muted }}>{d.t}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: d.c }}>{d.p}%</span>
+            </div>
+            <div style={{ background: "#050e1a", borderRadius: 4, height: 5, overflow: "hidden" }}>
+              <div style={{ background: `linear-gradient(90deg, ${d.c}77, ${d.c})`, height: "100%", width: `${d.p}%`, borderRadius: 4 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {STUDY_TOPICS.map((topic, i) => (
+          <button key={i} onClick={() => setSel(i)}
+            style={{ background: C.card, border: `1.5px solid ${topic.color}33`, borderRadius: 16, padding: "18px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 14, transition: "all .2s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = topic.color + "12"; e.currentTarget.style.borderColor = topic.color + "77"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = C.card; e.currentTarget.style.borderColor = topic.color + "33"; }}>
+            <div style={{ width: 52, height: 52, borderRadius: 14, background: topic.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{topic.icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: C.text }}>{topic.title}</span>
+                <Pill label={topic.examWeight} color={topic.color} />
+              </div>
+              <div style={{ fontSize: 12, color: C.faint, marginBottom: 4 }}>{topic.tagline}</div>
+              <div style={{ fontSize: 11, color: topic.color + "bb" }}>{topic.sections.length} sections · examples · exam tips</div>
+            </div>
+            <span style={{ color: topic.color, fontSize: 22, opacity: 0.6 }}>›</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FlashcardsView({ onSeen }) {
+  const [idx, setIdx] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [seen, setSeen] = useState(new Set([0]));
+
+  const go = (newIdx) => {
+    setIdx(newIdx);
+    setFlipped(false);
+    const s = new Set(seen).add(newIdx);
+    setSeen(s);
+    onSeen(s.size);
+  };
+
+  const card = FLASHCARDS[idx];
+  const pct = Math.round((seen.size / FLASHCARDS.length) * 100);
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div>
+          <h2 style={{ color: C.text, fontSize: 20, fontWeight: 900, margin: "0 0 2px" }}>🃏 Flashcards</h2>
+          <p style={{ color: C.faint, fontSize: 13, margin: 0 }}>{idx + 1} of {FLASHCARDS.length} · {seen.size} reviewed</p>
+        </div>
+        <button onClick={() => go(Math.floor(Math.random() * FLASHCARDS.length))}
+          style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 9, color: C.muted, padding: "8px 14px", cursor: "pointer", fontSize: 13 }}>🔀</button>
+      </div>
+
+      <div onClick={() => setFlipped(!flipped)}
+        style={{ cursor: "pointer", marginBottom: 18, minHeight: 200, background: flipped ? "linear-gradient(135deg, #003260, #004e8c)" : C.card, border: `2px solid ${flipped ? "#0078d4" : C.border}`, borderRadius: 18, padding: "28px 24px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", transition: "all .3s", position: "relative" }}>
+        <span style={{ position: "absolute", top: 14, right: 16, fontSize: 11, color: C.faint }}>{flipped ? "✅ Answer" : "❓ Question"} · tap to flip</span>
+        <div style={{ fontSize: 15, color: C.text, textAlign: "center", lineHeight: 1.7, fontWeight: flipped ? 400 : 600 }}>
+          {flipped ? card.a : card.q}
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <button onClick={() => go((idx - 1 + FLASHCARDS.length) % FLASHCARDS.length)}
+          style={{ flex: 1, background: C.card, border: `1px solid ${C.border}`, borderRadius: 11, color: C.muted, padding: "12px", cursor: "pointer", fontSize: 15 }}>←</button>
+        {!flipped && (
+          <button onClick={() => setFlipped(true)}
+            style={{ flex: 2, background: "#0078d4", border: "none", borderRadius: 11, color: "#fff", padding: "12px", cursor: "pointer", fontWeight: 700, fontSize: 14 }}>Reveal Answer</button>
+        )}
+        <button onClick={() => go((idx + 1) % FLASHCARDS.length)}
+          style={{ flex: 1, background: C.card, border: `1px solid ${C.border}`, borderRadius: 11, color: C.muted, padding: "12px", cursor: "pointer", fontSize: 15 }}>→</button>
+      </div>
+
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 11, padding: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
+          <span style={{ fontSize: 12, color: C.faint }}>Progress</span>
+          <span style={{ fontSize: 12, color: "#00b294", fontWeight: 700 }}>{pct}%</span>
+        </div>
+        <div style={{ background: "#050e1a", borderRadius: 4, height: 6, overflow: "hidden" }}>
+          <div style={{ background: "linear-gradient(90deg, #00b29477, #00b294)", height: "100%", width: `${pct}%`, borderRadius: 4, transition: "width .3s" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuizView({ onScore }) {
+  const [started, setStarted] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [showExp, setShowExp] = useState(false);
+  const [results, setResults] = useState([]);
+  const [finished, setFinished] = useState(false);
+
+  const start = (qs) => {
+    setQuestions(qs); setQIdx(0); setSelected(null);
+    setShowExp(false); setResults([]); setFinished(false); setStarted(true);
+  };
+
+  const handleSelect = (i) => {
+    if (selected !== null) return;
+    setSelected(i);
+    setShowExp(true);
+    const correct = i === questions[qIdx].answer;
+    const newR = [...results, { correct }];
+    setResults(newR);
+    onScore({ correct: newR.filter(r => r.correct).length, total: newR.length });
+  };
+
+  const next = () => {
+    if (qIdx + 1 >= questions.length) { setFinished(true); return; }
+    setQIdx(qIdx + 1); setSelected(null); setShowExp(false);
+  };
+
+  if (!started) {
+    return (
+      <div>
+        <h2 style={{ color: C.text, fontSize: 20, fontWeight: 900, margin: "0 0 4px" }}>📝 Quiz Mode</h2>
+        <p style={{ color: C.faint, fontSize: 13, margin: "0 0 24px" }}>200 practice questions with instant explanations</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <button onClick={() => start(QUIZZES)}
+            style={{ background: "#0078d4", border: "none", borderRadius: 14, color: "#fff", padding: "18px 20px", cursor: "pointer", textAlign: "left", fontWeight: 800, fontSize: 16 }}>
+            🎯 Full Exam — All 200 Questions
+          </button>
+          {[25, 50, 100].map(n => (
+            <button key={n} onClick={() => start([...QUIZZES].sort(() => Math.random() - .5).slice(0, n))}
+              style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 13, color: C.text, padding: "15px 20px", cursor: "pointer", textAlign: "left", fontSize: 15 }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = "#0078d4"}
+              onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+              🎲 Random Quiz — {n} Questions
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (finished) {
+    const correct = results.filter(r => r.correct).length;
+    const pct = Math.round((correct / results.length) * 100);
+    const passed = pct >= 70;
+    return (
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>{passed ? "🎉" : "📚"}</div>
+        <h2 style={{ color: C.text, fontSize: 22, fontWeight: 900, marginBottom: 8 }}>{passed ? "Excellent Work!" : "Keep Studying!"}</h2>
+        <div style={{ fontSize: 52, fontWeight: 900, color: passed ? "#00b294" : "#f0ad4e", marginBottom: 6 }}>{pct}%</div>
+        <p style={{ color: C.muted, fontSize: 15, marginBottom: 24 }}>{correct} out of {results.length} correct</p>
+        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 13, padding: 16, marginBottom: 24, textAlign: "left" }}>
+          <p style={{ color: C.muted, fontSize: 13, margin: 0, lineHeight: 1.6 }}>
+            {passed ? "✅ Scoring above 70% — looking strong! Keep reviewing weak areas, especially Azure Architecture (35-40% of exam)." : "⚠️ AZ-900 passing score is ~700/1000 (~70%). Review the Study Guide topics and try flashcards to reinforce key concepts."}
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => start(QUIZZES)} style={{ flex: 1, background: "#0078d4", border: "none", borderRadius: 11, color: "#fff", padding: "13px", cursor: "pointer", fontWeight: 700 }}>All 200 Again</button>
+          <button onClick={() => setStarted(false)} style={{ flex: 1, background: C.card, border: `1px solid ${C.border}`, borderRadius: 11, color: C.muted, padding: "13px", cursor: "pointer" }}>Menu</button>
+        </div>
+      </div>
+    );
+  }
+
+  const q = questions[qIdx];
+  const correct = results.filter(r => r.correct).length;
+  const wrong = results.filter(r => !r.correct).length;
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <span style={{ color: C.faint, fontSize: 13 }}>Q {qIdx + 1} / {questions.length}</span>
+        <span style={{ fontSize: 13 }}><span style={{ color: "#00b294" }}>✅ {correct}</span> <span style={{ color: C.faint }}>·</span> <span style={{ color: "#e74c3c" }}>❌ {wrong}</span></span>
+      </div>
+      <div style={{ background: "#050e1a", borderRadius: 4, height: 4, marginBottom: 18, overflow: "hidden" }}>
+        <div style={{ background: "#0078d4", height: "100%", width: `${(qIdx / questions.length) * 100}%`, transition: "width .3s" }} />
+      </div>
+
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px", marginBottom: 14 }}>
+        <p style={{ margin: 0, color: C.text, fontSize: 15, lineHeight: 1.7, fontWeight: 600 }}>{q.q}</p>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+        {q.options.map((opt, i) => {
+          let bg = C.card, border = C.border, textColor = C.muted;
+          if (selected !== null) {
+            if (i === q.answer) { bg = "#002d1a"; border = "#00b294"; textColor = "#00e5a0"; }
+            else if (i === selected && i !== q.answer) { bg = "#2d0a0a"; border = "#e74c3c"; textColor = "#ff7070"; }
+            else { textColor = C.faint; }
+          }
+          return (
+            <button key={i} onClick={() => handleSelect(i)}
+              style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 11, padding: "13px 16px", cursor: selected !== null ? "default" : "pointer", textAlign: "left", color: textColor, fontSize: 14, lineHeight: 1.5, transition: "all .15s", display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{ fontWeight: 800, minWidth: 22, fontSize: 13 }}>{["A", "B", "C", "D"][i]}.</span>
+              <span style={{ flex: 1 }}>{opt}</span>
+              {selected !== null && i === q.answer && <span>✅</span>}
+              {selected !== null && i === selected && i !== q.answer && <span>❌</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {showExp && (
+        <div style={{ background: "#001830", border: "1px solid #0078d444", borderRadius: 13, padding: "13px 16px", marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "#0078d4", fontWeight: 800, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>💡 Explanation</div>
+          <p style={{ margin: 0, color: C.muted, fontSize: 13, lineHeight: 1.65 }}>{q.exp}</p>
+        </div>
+      )}
+
+      {selected !== null && (
+        <button onClick={next}
+          style={{ width: "100%", background: "#0078d4", border: "none", borderRadius: 11, color: "#fff", padding: "14px", cursor: "pointer", fontWeight: 800, fontSize: 15 }}>
+          {qIdx + 1 >= questions.length ? "See Results 🏆" : "Next Question →"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+const VIEWS = ["Dashboard", "Study", "Flashcards", "Quiz"];
+const VIEW_ICONS = { Dashboard: "🏠", Study: "📚", Flashcards: "🃏", Quiz: "📝" };
+
+function App() {
+  const [view, setView] = useState("Dashboard");
+  const [quizScore, setQuizScore] = useState({ correct: 0, total: 0 });
+  const [flashcardsSeen, setFlashcardsSeen] = useState(0);
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif", color: C.text }}>
+      {/* Sticky Nav */}
+      <div style={{ position: "sticky", top: 0, zIndex: 100, background: C.bg + "f0", backdropFilter: "blur(14px)", borderBottom: `1px solid ${C.border}`, padding: "0 16px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", gap: 2, padding: "8px 0", overflowX: "auto" }}>
+          {VIEWS.map(v => (
+            <button key={v} onClick={() => setView(v)}
+              style={{ background: view === v ? "#0078d4" : "none", border: "none", borderRadius: 9, color: view === v ? "#fff" : C.faint, padding: "9px 15px", cursor: "pointer", fontWeight: view === v ? 700 : 400, fontSize: 13, whiteSpace: "nowrap", transition: "all .2s" }}>
+              {VIEW_ICONS[v]} {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px 80px" }}>
+        {view === "Dashboard" && <Dashboard quizScore={quizScore} flashcardsSeen={flashcardsSeen} onNav={setView} />}
+        {view === "Study" && <StudyView />}
+        {view === "Flashcards" && <FlashcardsView onSeen={setFlashcardsSeen} />}
+        {view === "Quiz" && <QuizView onScore={setQuizScore} />}
+      </div>
+    </div>
+  );
+}
+
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
